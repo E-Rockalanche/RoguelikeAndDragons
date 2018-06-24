@@ -5,4 +5,4 @@ arguments:
 
 return value: point
 */
-return (x << 16) | y;
+return (argument0 << 16) | argument1;

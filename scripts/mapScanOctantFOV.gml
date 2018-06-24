@@ -61,7 +61,7 @@ for(var column = start_column; column <= max_radius; column++) {
             var pos2 = getOctantPosition(x0, y0, column-1, max(0, row-1), octant);
             if mask[# pos2[0], pos2[1]] && !mask[# i, j] {
                 mask[# i, j] = true;
-                ds_list_add(view_list, Point(i, j, width));
+                ds_list_add(view_list, Point(i, j));
             }
         } else if !mask[# i, j] {
             // add to mask

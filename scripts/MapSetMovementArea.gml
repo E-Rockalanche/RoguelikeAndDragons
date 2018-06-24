@@ -3,6 +3,7 @@ with (argument0) {
     var actor = argument1;
     var x0 = actor.i;
     var y0 = actor.j;
+    
     var distance = ActorGetMoveDistance(actor);
     
     if (movement_area_set) {
@@ -32,12 +33,14 @@ with (argument0) {
             var j = parent_j + dirs[d, 1];
             var flags = flag_grid[# i, j];
             
-            if (closed_grid[# i, j] || (flags & TileFlag.SOLID))
+            if (closed_grid[# i, j] || open_grid[# i, j] || (flags & TileFlag.SOLID))
                 continue;
             
-            var other_actor = MapGetActor(argument0, i, j);
-            if (other_actor != NULL && other_actor.alliance != actor.alliance)
-                continue;
+            if (flags & TileFlag.HAS_ACTOR) {
+                var other_actor = mapFindActor(i, j);
+                if (other_actor.alliance != actor.alliance)
+                    continue;
+            }
             
             var child_g_cost = parent_g_cost + 1 + (d >= 4)/2;
             if (floor(child_g_cost) <= distance) {

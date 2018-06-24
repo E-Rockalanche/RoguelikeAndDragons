@@ -9,7 +9,7 @@ with(argument0) {
         var f_cost = g_cost + h_cost;
         g_grid[# i, j] = g_cost;
         parent_grid[# i, j] = parent_point;
-        var child_point = Point(i, j, width);
+        var child_point = Point(i, j);
         if (already_open) {
             ds_priority_change_priority(open_list, child_point, f_cost);
         } else {

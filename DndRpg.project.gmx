@@ -8,6 +8,8 @@
   <sprites name="sprites">
     <sprite>sprites\spr_player</sprite>
     <sprite>sprites\spr_enemy</sprite>
+    <sprite>sprites\spr_controller</sprite>
+    <sprite>sprites\spr_map</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bkr_tiles</background>
@@ -42,6 +44,7 @@
       <script>scripts\MapSetTileFlags.gml</script>
       <script>scripts\MapGetActor.gml</script>
       <script>scripts\MapDrawShadow.gml</script>
+      <script>scripts\mapFindActor.gml</script>
     </scripts>
     <scripts name="Blob">
       <script>scripts\Blob.gml</script>
@@ -87,7 +90,6 @@
     <object>objects\obj_actor</object>
     <object>objects\obj_map</object>
     <object>objects\obj_game</object>
-    <object>objects\obj_test</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
@@ -98,7 +100,7 @@
     <constant name="TILE_DEPTH">0</constant>
     <constant name="TILE_SIZE">16</constant>
     <constant name="HIGHLIGHT_DEPTH">-1</constant>
-    <constant name="MOVE_TIME">8</constant>
+    <constant name="MOVE_TIME">4</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
