@@ -20,7 +20,7 @@ with(argument0) {
         // view list, view mask, center x, center y, octant, max distance, start_column, start slope, end slope, add_walls, underwater fov
         mapScanOctantFOV(view, mask, i, j, octant, max_radius, 1, 0, 1, add_walls, in_water);
     }
-    ds_list_add(view, Point(i, j, width));
+    ds_list_add(view, Point(i, j));
     ds_grid_destroy(mask);
     return view;
 }

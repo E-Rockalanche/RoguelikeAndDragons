@@ -87,6 +87,7 @@
     <object>objects\obj_actor</object>
     <object>objects\obj_map</object>
     <object>objects\obj_game</object>
+    <object>objects\obj_test</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

@@ -6,8 +6,8 @@ with(argument0) {
     // clear view
     for(var index = 0; index < ds_list_size(view_list); index++) {
         var point = view_list[| index];
-        var i = PointGetX(point, width);
-        var j = PointGetY(point, width);
+        var i = PointGetX(point);
+        var j = PointGetY(point);
         ds_grid_unset_flag(flag_grid, i, j, TileFlag.IN_VIEW);
     }
     ds_list_destroy(view_list);
@@ -17,8 +17,8 @@ with(argument0) {
     
     for(var index = 0; index < ds_list_size(view_list); index++) {
         var point = view_list[| index];
-        var i = PointGetX(point, width);
-        var j = PointGetY(point, width);
+        var i = PointGetX(point);
+        var j = PointGetY(point);
         ds_grid_set_flag(flag_grid, i, j, TileFlag.IN_VIEW | TileFlag.DISCOVERED);
     }
     console_time("set fov", current_time - time);

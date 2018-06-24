@@ -134,8 +134,8 @@ draw_y = 0;
     cur_i = dest_i;
     cur_j = dest_j;
     var point = ds_stack_pop(path_stack);
-    dest_i = PointGetX(point, map.width);
-    dest_j = PointGetY(point, map.width);
+    dest_i = PointGetX(point);
+    dest_j = PointGetY(point);
 } else {
     state = ActorState.READY;
 }

@@ -40,6 +40,8 @@ switch(octant){
         pos[1] = j+row;
         pos[0] = i+column;
         break;
+    default:
+        show_error("Invalid octant in getOctantPosition()", true);
     }
     
 return pos;

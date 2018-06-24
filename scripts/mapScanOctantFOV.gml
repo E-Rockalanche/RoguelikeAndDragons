@@ -66,7 +66,7 @@ for(var column = start_column; column <= max_radius; column++) {
         } else if !mask[# i, j] {
             // add to mask
             mask[# i, j] = true;
-            ds_list_add(view_list, Point(i, j, width));
+            ds_list_add(view_list, Point(i, j));
         }
             
         if obstructs_view {

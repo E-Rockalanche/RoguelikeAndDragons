@@ -1,9 +1,8 @@
 /*
 arguments:
-    0: point id
-    1: map width
-
-return value:
-    point x value
+    0: point
+    
+return value: int
 */
-return argument0 div argument1;
+
+return argument0 & 65535;

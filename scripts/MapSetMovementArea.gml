@@ -9,7 +9,7 @@ with (argument0) {
         MapClearMovementArea(argument0);
     }
     
-    ds_priority_add(open_list, Point(x0, y0, width), 0);
+    ds_priority_add(open_list, Point(x0, y0), 0);
     ds_grid_clear(movement_grid, false);
     g_grid[# x0, y0] = 0;
     open_grid[# x0, y0] = true;
@@ -17,8 +17,8 @@ with (argument0) {
     
     while(ds_priority_size(open_list)) {
         var parent_point = ds_priority_delete_min(open_list);
-        var parent_i = PointGetX(parent_point, width);
-        var parent_j = PointGetY(parent_point, height);
+        var parent_i = PointGetX(parent_point);
+        var parent_j = PointGetY(parent_point);
         
         if (!ds_grid_has_flag(flag_grid, parent_i, parent_j, TileFlag.HAS_ACTOR)){
             movement_grid[# parent_i, parent_j] = true;
@@ -47,8 +47,8 @@ with (argument0) {
     }
     for(var index = 0; index < ds_list_size(closed_list); index++) {
         var point = closed_list[| index];
-        var i = PointGetX(point, width);
-        var j = PointGetY(point, width);
+        var i = PointGetX(point);
+        var j = PointGetY(point);
         open_grid[# i, j] = false;
         closed_grid[# i, j] = false;
     }
