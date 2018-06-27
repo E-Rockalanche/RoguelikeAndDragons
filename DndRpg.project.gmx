@@ -2,6 +2,7 @@
 <assets>
   <Configs name="configs">
     <Config>Configs\Default</Config>
+    <Config>Configs\android</Config>
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
@@ -19,32 +20,49 @@
   <scripts name="scripts">
     <scripts name="globals">
       <script>scripts\initGlobals.gml</script>
+      <script>scripts\mouseGlobals.gml</script>
+      <script>scripts\setDirs.gml</script>
+      <script>scripts\actorGlobals.gml</script>
+      <script>scripts\mapGlobals.gml</script>
+      <script>scripts\setViewPort.gml</script>
     </scripts>
     <scripts name="Map">
       <scripts name="FOV">
-        <script>scripts\MapSetFOV.gml</script>
+        <script>scripts\MapAddFOV.gml</script>
+        <script>scripts\MapRemoveFOV.gml</script>
+        <script>scripts\MapSetActiveFOV.gml</script>
+        <script>scripts\MapClearActiveView.gml</script>
+        <script>scripts\MapClearFOV.gml</script>
         <script>scripts\MapGetFOV.gml</script>
         <script>scripts\mapScanOctantFOV.gml</script>
         <script>scripts\getOctantPosition.gml</script>
+        <script>scripts\MapDrawShadow.gml</script>
+      </scripts>
+      <scripts name="generation">
+        <script>scripts\MapGenerateOpenCave.gml</script>
+        <script>scripts\MapSetTileFlags.gml</script>
+        <script>scripts\MapPlaceTiles.gml</script>
+      </scripts>
+      <scripts name="pathfinding">
+        <script>scripts\MapSetMovementArea.gml</script>
+        <script>scripts\MapGetMovementAreaPathTo.gml</script>
+        <script>scripts\MapGetPathCost.gml</script>
+        <script>scripts\MapGetPathTo.gml</script>
+        <script>scripts\MapCellSetOpen.gml</script>
+        <script>scripts\MapHighlightMovementArea.gml</script>
+        <script>scripts\MapClearMovementArea.gml</script>
       </scripts>
       <script>scripts\Map.gml</script>
       <script>scripts\MapPositionFree.gml</script>
       <script>scripts\MapPositionEmpty.gml</script>
-      <script>scripts\MapCellSetOpen.gml</script>
-      <script>scripts\MapGenerateOpenCave.gml</script>
-      <script>scripts\MapPlaceTiles.gml</script>
-      <script>scripts\MapSetMovementArea.gml</script>
-      <script>scripts\MapHighlightMovementArea.gml</script>
-      <script>scripts\MapClearMovementArea.gml</script>
-      <script>scripts\MapGetMovementAreaPathTo.gml</script>
-      <script>scripts\MapGetPathTo.gml</script>
       <script>scripts\MapAddActor.gml</script>
       <script>scripts\MapRemoveActor.gml</script>
       <script>scripts\MapMoveActor.gml</script>
-      <script>scripts\MapSetTileFlags.gml</script>
       <script>scripts\MapGetActor.gml</script>
-      <script>scripts\MapDrawShadow.gml</script>
       <script>scripts\mapFindActor.gml</script>
+      <script>scripts\MapGetActorList.gml</script>
+      <script>scripts\MapUnsetActor.gml</script>
+      <script>scripts\MapSetActor.gml</script>
     </scripts>
     <scripts name="Blob">
       <script>scripts\Blob.gml</script>
@@ -56,13 +74,33 @@
       <script>scripts\ActorGetMoveDistance.gml</script>
       <script>scripts\ActorSetPosition.gml</script>
       <script>scripts\ActorSetPath.gml</script>
-      <script>scripts\ActorAnimatePath.gml</script>
       <script>scripts\ActorGetViewDistance.gml</script>
+      <script>scripts\ActorAnimatePath.gml</script>
+      <script>scripts\ActorCalculateFOV.gml</script>
+      <script>scripts\ActorMove.gml</script>
     </scripts>
     <scripts name="Point">
       <script>scripts\Point.gml</script>
       <script>scripts\PointGetX.gml</script>
       <script>scripts\PointGetY.gml</script>
+    </scripts>
+    <scripts name="mouse">
+      <script>scripts\updateMouse.gml</script>
+      <script>scripts\resetMouse.gml</script>
+      <script>scripts\mouseInBounds.gml</script>
+      <script>scripts\mouseRawInBounds.gml</script>
+      <script>scripts\mouseInBox.gml</script>
+      <script>scripts\mouseRawInBox.gml</script>
+    </scripts>
+    <scripts name="functions">
+      <script>scripts\assert.gml</script>
+      <script>scripts\getBit.gml</script>
+      <script>scripts\withinBounds.gml</script>
+      <script>scripts\chance.gml</script>
+      <script>scripts\console_values.gml</script>
+      <script>scripts\console_state.gml</script>
+      <script>scripts\console_time.gml</script>
+      <script>scripts\scaleView.gml</script>
     </scripts>
     <scripts name="ds_">
       <script>scripts\ds_grid_clone.gml</script>
@@ -74,17 +112,11 @@
       <script>scripts\ds_grid_unset_flag.gml</script>
       <script>scripts\ds_grid_has_flag.gml</script>
       <script>scripts\ds_list_delete_value.gml</script>
+      <script>scripts\ds_list_destroy_if_exists.gml</script>
     </scripts>
-    <scripts name="functions">
-      <script>scripts\assert.gml</script>
-      <script>scripts\getBit.gml</script>
-      <script>scripts\withinBounds.gml</script>
-      <script>scripts\chance.gml</script>
-      <script>scripts\console_values.gml</script>
+    <scripts name="Game">
+      <script>scripts\gameSetAnimation.gml</script>
     </scripts>
-    <script>scripts\console_state.gml</script>
-    <script>scripts\scaleView.gml</script>
-    <script>scripts\console_time.gml</script>
   </scripts>
   <objects name="objects">
     <object>objects\obj_actor</object>
@@ -94,13 +126,19 @@
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>
-  <constants number="6">
+  <constants number="12">
     <constant name="NULL">-1</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_DEPTH">0</constant>
     <constant name="TILE_SIZE">16</constant>
     <constant name="HIGHLIGHT_DEPTH">-1</constant>
     <constant name="MOVE_TIME">4</constant>
+    <constant name="MOUSE_HOLD_THRESHOLD">16</constant>
+    <constant name="VIEW_ZOOM_MAX">2</constant>
+    <constant name="VIEW_ZOOM_MIN">0.05</constant>
+    <constant name="DEBUG">true</constant>
+    <constant name="CLICK_TIME">10</constant>
+    <constant name="VIEW_FOCUS_SPEED">8</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

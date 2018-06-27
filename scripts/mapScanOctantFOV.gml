@@ -12,7 +12,6 @@ var start_column = argument6;
 var start_slope = argument7;
 var end_slope = argument8;
 var add_walls = argument9;
-var in_water = argument10;
     
 /*
     \2|1/
@@ -54,17 +53,23 @@ for(var column = start_column; column <= max_radius; column++) {
         
         var flags = flag_grid[# i, j];
         var tile = tile_grid[# i, j];
-        obstructs_view = (flags & TileFlag.OBSTRUCTS_VIEW) || ((tile != Tile.WATER) && in_water);
+        obstructs_view = (flags & TileFlag.OBSTRUCTS_VIEW);
         
-        if (obstructs_view && add_walls) {
-            // if next closest tile to center is in mask, add this wall to mask
-            var pos2 = getOctantPosition(x0, y0, column-1, max(0, row-1), octant);
-            if mask[# pos2[0], pos2[1]] && !mask[# i, j] {
+        if !mask[# i, j] {
+            /*
+            if (obstructs_view && add_walls) {
+                // if next closest tile to center is in mask, add this wall to mask
+                var pos2 = getOctantPosition(x0, y0, column-1, max(0, row-1), octant);
+                if mask[# pos2[0], pos2[1]] {
+                    mask[# i, j] = true;
+                    ds_list_add(view_list, Point(i, j));
+                }
+            } else {
+                // add to mask
                 mask[# i, j] = true;
                 ds_list_add(view_list, Point(i, j));
             }
-        } else if !mask[# i, j] {
-            // add to mask
+            */
             mask[# i, j] = true;
             ds_list_add(view_list, Point(i, j));
         }
@@ -78,7 +83,7 @@ for(var column = start_column; column <= max_radius; column++) {
             if (new_end_slope >= start_slope) {
                 if (end_slope >= new_start_slope) {
                     // split scan
-                    mapScanOctantFOV(view_list, mask, x0, y0, octant, max_radius, column + 1, start_slope, new_end_slope, add_walls, in_water);
+                    mapScanOctantFOV(view_list, mask, x0, y0, octant, max_radius, column + 1, start_slope, new_end_slope, add_walls);
                     start_slope = new_start_slope;
                 } else {
                     end_slope = new_end_slope;

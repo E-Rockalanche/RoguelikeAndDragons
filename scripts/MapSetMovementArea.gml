@@ -1,10 +1,10 @@
 with (argument0) {
-    var time = current_time;
     var actor = argument1;
     var x0 = actor.i;
     var y0 = actor.j;
+    var time = current_time;
     
-    var distance = ActorGetMoveDistance(actor);
+    var distance = ActorGetMoveDistance(actor) + 0.5;// fudge so you can move diagonally on move distance of 1
     
     if (movement_area_set) {
         MapClearMovementArea(argument0);
@@ -43,7 +43,7 @@ with (argument0) {
             }
             
             var child_g_cost = parent_g_cost + 1 + (d >= 4)/2;
-            if (floor(child_g_cost) <= distance) {
+            if (child_g_cost <= distance) {
                 MapCellSetOpen(argument0, i, j, parent_point, child_g_cost, 0);
             }
         }
@@ -57,6 +57,5 @@ with (argument0) {
     }
     ds_list_clear(closed_list);
     movement_area_set = true;
-    time = current_time - time;
-    console_time("set movement area", time);
+    console_time("MapSetMovementArea", current_time - time);
 }

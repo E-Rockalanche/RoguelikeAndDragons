@@ -95,18 +95,18 @@ hands = NULL;
 map = NULL;
 inventory = ds_list_create();
 path_stack = NULL;
+view_list = NULL;
 state = ActorState.READY;
+distance_moved = 0;
+is_player = false;
+
+in_view = false;
+was_in_view = false;
 
 i = 0;
 j = 0;
-draw_i = 0;
-draw_j = 0;
-cur_i = 0;
-cur_j = 0;
-dest_i = 0;
-dest_j = 0;
-draw_x = 0;
-draw_y = 0;
+previous_i = 0;
+previous_j = 0;
 </string>
           </argument>
         </arguments>
@@ -129,16 +129,10 @@ draw_y = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (ds_stack_size(path_stack)) {
-    alarm[0] = MOVE_TIME;
-    cur_i = dest_i;
-    cur_j = dest_j;
-    var point = ds_stack_pop(path_stack);
-    dest_i = PointGetX(point);
-    dest_j = PointGetY(point);
-} else {
-    state = ActorState.READY;
-}
+            <string>///ready
+state = ActorState.READY;
+hspeed = 0;
+vspeed = 0;
 </string>
           </argument>
         </arguments>
@@ -161,16 +155,11 @@ draw_y = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (state == ActorState.ANIMATE_PATH) {
-    var scale = 1 - alarm[0]/MOVE_TIME;
-    draw_i = cur_i + (dest_i - cur_i) * scale;
-    draw_j = cur_j + (dest_j - cur_j) * scale;
-} else {
-    draw_i = i;
-    draw_j = j;
+            <string>///set draw coordinates
+if (state != ActorState.MOVING) {
+    x = (0.5 + i) * TILE_SIZE;
+    y = (0.5 + j) * TILE_SIZE;
 }
-draw_x = floor((draw_i + 0.5) * TILE_SIZE);
-draw_y = floor((draw_j + 0.5) * TILE_SIZE);
 </string>
           </argument>
         </arguments>
@@ -193,7 +182,8 @@ draw_y = floor((draw_j + 0.5) * TILE_SIZE);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_sprite(sprite_index, image_index, draw_x, draw_y);
+            <string>///Draw self
+draw_sprite(sprite_index, image_index, x, y);
 </string>
           </argument>
         </arguments>

@@ -1,5 +1,5 @@
 with(argument0) {
-    var blob = tryBlob(width-2, height-2, 65, 100);
+    var blob = tryBlob(width-2, height-2, 55, 100);
     ds_grid_set_region(tile_grid, 0, 0, width-1, height-1, Tile.WALL);
     ds_grid_set_region(flag_grid, 0, 0, width-1, height-1, getBit(TileFlag.SOLID));
     var blob_width = ds_grid_width(blob);

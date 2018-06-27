@@ -35,6 +35,7 @@ parent_grid = NULL;
 open_grid = NULL;
 closed_grid = NULL;
 movement_grid = NULL;
+view_grid = NULL;
 
 open_list = ds_priority_create();
 closed_list = ds_list_create();

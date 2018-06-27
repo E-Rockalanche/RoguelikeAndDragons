@@ -26,27 +26,29 @@
           <argument>
             <kind>1</kind>
             <string>initGlobals();
-map = Map(16, 16);
+map = Map(64, 64);
 MapGenerateOpenCave(map);
 MapSetTileFlags(map);
 MapPlaceTiles(map);
 
+actor_list = MapGetActorList(map);
 player_list = ds_list_create();
-player = Player();
-ds_list_add(player_list, player);
+round_queue = ds_queue_create();
 
 view_list = ds_list_create();
 
-show_debug_message("placing player");
-var i, j;
-do{
-    i = irandom_range(1, map.width-2);
-    j = irandom_range(1, map.height-2);
-}until(MapPositionEmpty(map, i, j));
-console_values(i, j);
-MapAddActor(map, player, i, j);
-
-repeat(8) {
+repeat(3) {
+    show_debug_message("Placing player");
+    do{
+        i = irandom_range(1, map.width-2);
+        j = irandom_range(1, map.height-2);
+        console_values(i, j);
+    }until(MapPositionEmpty(map, i, j));
+    var player = Player();
+    MapAddActor(map, player, i, j);
+    ds_list_add(player_list, player);
+}
+repeat(3) {
     show_debug_message("Placing enemy");
     do{
         i = irandom_range(1, map.width-2);
@@ -56,20 +58,48 @@ repeat(8) {
     var enemy = Enemy();
     MapAddActor(map, enemy, i, j);
 }
-repeat(8) {
-    show_debug_message("Placing ally");
-    do{
-        i = irandom_range(1, map.width-2);
-        j = irandom_range(1, map.height-2);
-        console_values(i, j);
-    }until(MapPositionEmpty(map, i, j));
-    var ally = Player();
-    MapAddActor(map, ally, i, j);
-}
 
-state = GameState.TURN_START;
-animation = false;
+// get views for players
+for(var index = 0; index &lt; ds_list_size(player_list); index++) {
+    var player = player_list[| index];
+    ActorCalculateFOV(player);
+    MapAddFOV(map, player.view_list);
+}
+new_enemy_in_sight = false;
+
+state = GameState.NEXT_ROUND;
 shadow = NULL;
+current_round = 0;
+current_actor = NULL;
+animation = false;
+focus_view_on_actor = NULL;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Set new player FOV
+MapRemoveFOV(map, current_actor.view_list, true);
+ActorCalculateFOV(current_actor);
+MapAddFOV(map, current_actor.view_list, true);
+shadow = MapDrawShadow(map, shadow, true);
 </string>
           </argument>
         </arguments>
@@ -92,7 +122,121 @@ shadow = NULL;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>animation = false;
+            <string>/// animation = NONE
+animation = false;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="2">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///View
+
+if !IS_MOBILE{
+    var zoom = 0;
+    if mouse_wheel_down() {
+        //zoom out. Increase view size
+        zoom = 1.1;
+    } else if mouse_wheel_up() {
+        //zoom in. decrease view size
+        zoom = 1/1.1;
+    }
+    scaleView(zoom);
+}
+
+if mouse_holding[0] {
+    focus_view_on_actor = NULL;
+    if mouse_holding[1] {
+        var d1 = point_distance(mouse_click_x[0], mouse_click_y[0], mouse_click_x[1], mouse_click_y[1]);
+        var d2 = point_distance(device_mouse_raw_x(0), device_mouse_raw_y(0), device_mouse_raw_x(1), device_mouse_raw_y(1));
+        
+        /*
+        var d1 = sqrt(sqr(mouse_click_x[0] - mouse_click_x[1]) + sqr(mouse_click_y[0] - mouse_click_y[1]));
+        var d2 = sqrt(sqr(mouse_raw_x[0] - mouse_raw_x[1]) + sqr(mouse_raw_y[0] - mouse_raw_y[1]));
+        */
+        
+        var zoom = d2/d1;
+        
+        var vx = view_xview + view_wview/2;
+        var vy = view_yview + view_hview/2;
+        
+        view_wview = clamp(view_wview/zoom, VIEW_WVIEW/VIEW_ZOOM_MAX, VIEW_WVIEW/VIEW_ZOOM_MIN);
+        view_hview = clamp(view_hview/zoom, VIEW_HVIEW/VIEW_ZOOM_MAX, VIEW_HVIEW/VIEW_ZOOM_MIN);
+        
+        view_xview = round(vx - view_wview/2);
+        view_yview = round(vy - view_hview/2);
+        
+        //update new mouse positions
+        for(var m = 0; m &lt; 2; m++) {
+            //save raw positions
+            mouse_click_x[m] = device_mouse_raw_x(m);
+            mouse_click_y[m] = device_mouse_raw_y(m);
+            //save map positions
+            mouse_x0[m] = device_mouse_x(m);
+            mouse_y0[m] = device_mouse_y(m);
+        }
+    } else {
+        //drag screen
+        view_xview += mouse_x0[0] - device_mouse_x(0);
+        view_yview += mouse_y0[0] - device_mouse_y(0);
+    }
+}
+
+if (focus_view_on_actor != NULL) {
+    var target_x = focus_view_on_actor.x - view_wview/2;
+    var target_y = focus_view_on_actor.y - view_hview/2;
+    if (point_distance(view_xview, view_yview, target_x, target_y) &lt; VIEW_FOCUS_SPEED) {
+        view_xview = target_x;
+        view_yview = target_y;
+    } else {
+        var dir = point_direction(view_xview, view_yview, target_x, target_y);
+        view_xview += lengthdir_x(VIEW_FOCUS_SPEED, dir);
+        view_yview += lengthdir_y(VIEW_FOCUS_SPEED, dir);
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>delta = (delta_time/1000000)*room_speed;
+
+updateMouse();
+
+texture_set_interpolation(false);
 </string>
           </argument>
         </arguments>
@@ -115,81 +259,91 @@ shadow = NULL;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//Execute state
+            <string>///Game loop
 
 if (animation) exit;
 
-if (state == GameState.TURN_START) {
-    MapSetFOV(map, player);
-    shadow = MapDrawShadow(map, shadow);
-    MapSetMovementArea(map, player);
+if (state == GameState.NEXT_ROUND) {
+    current_round++;
+    ds_queue_clear(round_queue);
+    for(var index = 0; index &lt; ds_list_size(actor_list); index++) {
+        ds_queue_enqueue(round_queue, actor_list[| index]);
+    }
+    state = GameState.NEXT_TURN;
+}
+
+if (state == GameState.NEXT_TURN) {
+    if ds_queue_size(round_queue) {
+        current_actor = ds_queue_dequeue(round_queue);
+        focus_view_on_actor = current_actor;
+        if (current_actor.is_player) {
+            state = GameState.HIGHLIGHT_MOVE_AREA;
+        } else {
+            state = GameState.AI_TURN;
+        }
+    } else {
+        state = GameState.NEXT_ROUND;
+    }
+    current_actor.distance_moved = 0;
+}
+
+if (state == GameState.HIGHLIGHT_MOVE_AREA) {
+    MapSetActiveFOV(map, current_actor.view_list);
+    shadow = MapDrawShadow(map, shadow, true);
+    MapSetMovementArea(map, current_actor);
     MapHighlightMovementArea(map);
     state = GameState.PLAYER_TURN;
 }
 
 if (state == GameState.PLAYER_TURN) {
-    if (mouse_check_button_pressed(mb_left)) {
+    if (mouse_clicked[0]) {
         var i = mouse_x div TILE_SIZE;
         var j = mouse_y div TILE_SIZE;
         if (withinBounds(i, j, 0, 0, map.width, map.height)) {
-            var path = MapGetMovementAreaPathTo(map, i, j);
-            if (path != NULL) {
-                ActorSetPath(player, path);
-                alarm[0] = ActorAnimatePath(player);
-                MapMoveActor(map, player, i, j);
-                MapClearMovementArea(map);
-                animation = true;
-                state = GameState.TURN_START;
+            var actor = MapGetActor(map, i, j);
+            if (actor != NULL) {
+                if (actor == current_actor) {
+                    MapClearActiveView(map, current_actor.view_list);
+                    state = GameState.NEXT_TURN;
+                }
+            } else {
+                var path = MapGetMovementAreaPathTo(map, i, j);
+                if (path != NULL) {
+                    ActorSetPath(current_actor, path);
+                    MapClearMovementArea(map);
+                    state = GameState.MOVE_ACTOR;
+                }
             }
         }
     }
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="6" enumb="61">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>scaleView(1.05);
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="6" enumb="60">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>scaleView(1/1.05);
+
+if (state == GameState.AI_TURN) {
+    shadow = MapDrawShadow(map, shadow, false);
+    state = GameState.NEXT_TURN;
+    gameSetAnimation(MOVE_TIME);
+}
+
+if (state == GameState.MOVE_ACTOR) {
+    if (new_enemy_in_sight) {
+        assert(current_actor.is_player, "player alerted of new enemy on ai turn");
+        state = GameState.HIGHLIGHT_MOVE_AREA;
+        new_enemy_in_sight = false;
+    } else if (ds_stack_size(current_actor.path_stack)) {
+        gameSetAnimation(MOVE_TIME);
+        MapUnsetActor(map, current_actor);
+        ActorMove(current_actor);
+        if (current_actor.is_player)
+            alarm[1] = MOVE_TIME/2;
+    } else {
+        MapSetActor(map, current_actor);
+        if (current_actor.is_player) {
+            state = GameState.HIGHLIGHT_MOVE_AREA;
+        } else {
+            state = GameState.AI_TURN;
+        }
+    }
+}
 </string>
           </argument>
         </arguments>
@@ -212,10 +366,56 @@ if (state == GameState.PLAYER_TURN) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (!surface_exists(shadow)) {
-    shadow = MapDrawShadow(map, shadow);
-}
+            <string>///Draw shadow
 draw_surface_ext(shadow, 0, 0, TILE_SIZE, TILE_SIZE, 0, c_white, 1);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="32">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Screenshot
+screen_save("screenshot_"+string(current_time)+".bmp");
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="9" enumb="27">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Quit
+game_end();
 </string>
           </argument>
         </arguments>

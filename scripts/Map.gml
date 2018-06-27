@@ -10,5 +10,6 @@ with (new_map) {
     open_grid = ds_grid_create(width, height);
     closed_grid = ds_grid_create(width, height);
     movement_grid = ds_grid_create(width, height);
+    view_grid = ds_grid_create(width, height);
 };
 return new_map;

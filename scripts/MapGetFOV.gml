@@ -3,7 +3,7 @@ with(argument0) {
     var j = argument2;
     var max_radius = argument3 + 0.5;
     var add_walls = argument4;
-    var in_water = argument5;
+    var time = current_time;
     
     /*
         \2|1/
@@ -18,9 +18,10 @@ with(argument0) {
     mask[# i, j] = true// must have
     for(var octant = 0; octant < 8; octant++) {
         // view list, view mask, center x, center y, octant, max distance, start_column, start slope, end slope, add_walls, underwater fov
-        mapScanOctantFOV(view, mask, i, j, octant, max_radius, 1, 0, 1, add_walls, in_water);
+        mapScanOctantFOV(view, mask, i, j, octant, max_radius, 1, 0, 1, add_walls);
     }
     ds_list_add(view, Point(i, j));
     ds_grid_destroy(mask);
+    console_time("MapGetFOV", current_time - time);
     return view;
 }
