@@ -179,8 +179,8 @@ if mouse_holding[0] {
         view_wview = clamp(view_wview/zoom, VIEW_WVIEW/VIEW_ZOOM_MAX, VIEW_WVIEW/VIEW_ZOOM_MIN);
         view_hview = clamp(view_hview/zoom, VIEW_HVIEW/VIEW_ZOOM_MAX, VIEW_HVIEW/VIEW_ZOOM_MIN);
         
-        view_xview = round(vx - view_wview/2);
-        view_yview = round(vy - view_hview/2);
+        view_xview = vx - view_wview/2;
+        view_yview = vy - view_hview/2;
         
         //update new mouse positions
         for(var m = 0; m &lt; 2; m++) {

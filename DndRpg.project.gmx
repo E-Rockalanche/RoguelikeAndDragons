@@ -78,6 +78,7 @@
       <script>scripts\ActorAnimatePath.gml</script>
       <script>scripts\ActorCalculateFOV.gml</script>
       <script>scripts\ActorMove.gml</script>
+      <script>scripts\ActorGetTileCost.gml</script>
     </scripts>
     <scripts name="Point">
       <script>scripts\Point.gml</script>
@@ -113,15 +114,28 @@
       <script>scripts\ds_grid_has_flag.gml</script>
       <script>scripts\ds_list_delete_value.gml</script>
       <script>scripts\ds_list_destroy_if_exists.gml</script>
+      <script>scripts\ds_list_get_random.gml</script>
+      <script>scripts\ds_list_debug.gml</script>
     </scripts>
     <scripts name="Game">
       <script>scripts\gameSetAnimation.gml</script>
+    </scripts>
+    <scripts name="MarkovChain">
+      <script>scripts\MarkovChain.gml</script>
+      <script>scripts\MarkovChainAnalyzeFile.gml</script>
+      <script>scripts\MarkovChainAnalyzeString.gml</script>
+      <script>scripts\MarkovChainAddRule.gml</script>
+      <script>scripts\MarkovChainGenerate.gml</script>
+      <script>scripts\MarkovChainGetValue.gml</script>
+      <script>scripts\MarkovChainDestroy.gml</script>
+      <script>scripts\MarkovChainDebug.gml</script>
     </scripts>
   </scripts>
   <objects name="objects">
     <object>objects\obj_actor</object>
     <object>objects\obj_map</object>
     <object>objects\obj_game</object>
+    <object>objects\obj_markov_tester</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>

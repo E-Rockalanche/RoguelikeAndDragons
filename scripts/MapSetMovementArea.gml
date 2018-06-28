@@ -42,7 +42,9 @@ with (argument0) {
                     continue;
             }
             
-            var child_g_cost = parent_g_cost + 1 + (d >= 4)/2;
+            var cur_cost = ActorGetTileCost(argument1, tile_grid[# i, j]) * (1 + (d >= 4)/2);
+            var child_g_cost = parent_g_cost + cur_cost;
+                
             if (child_g_cost <= distance) {
                 MapCellSetOpen(argument0, i, j, parent_point, child_g_cost, 0);
             }

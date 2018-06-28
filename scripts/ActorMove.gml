@@ -12,7 +12,8 @@ with(argument0) {
     hspeed = (i - previous_i)*TILE_SIZE/MOVE_TIME;
     vspeed = (j - previous_j)*TILE_SIZE/MOVE_TIME;
     
-    distance_moved += 1 + (i != previous_i && j != previous_j)*0.5;
+    var tile = map.tile_grid[# i, j];
+    distance_moved += ActorGetTileCost(argument0, tile) * (1 + (i != previous_i && j != previous_j)*0.5);
     
     alarm[0] = MOVE_TIME;
     state = ActorState.MOVING;

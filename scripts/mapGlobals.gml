@@ -11,8 +11,8 @@ enum TileFlag {
 enum Tile {
     WALL,
     FLOOR,
+    MUD,
     DOWN,
-    WATER,
     LENGTH
 };
 globalvar tile_flags;
