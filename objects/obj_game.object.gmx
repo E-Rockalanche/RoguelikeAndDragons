@@ -35,35 +35,41 @@ actor_list = MapGetActorList(map);
 player_list = ds_list_create();
 round_queue = ds_queue_create();
 
-repeat(3) {
-    show_debug_message("Placing player");
+view = instance_create(x, y, obj_view);
+
+for(var n = 0; n &lt; 3; n++) {
     do{
         i = irandom_range(1, map.width-2);
         j = irandom_range(1, map.height-2);
-        console_values(i, j);
     }until(MapPositionEmpty(map, i, j));
     var player = Player();
+    player.name = "Player "+string(n);
     MapAddActor(map, player, i, j);
     ds_list_add(player_list, player);
 }
-repeat(3) {
-    show_debug_message("Placing enemy");
+
+for(var n = 0; n &lt; 3; n++) {
     do{
         i = irandom_range(1, map.width-2);
         j = irandom_range(1, map.height-2);
-        console_values(i, j);
     }until(MapPositionEmpty(map, i, j));
     var enemy = Enemy();
+    enemy.name = "Enemy "+string(n);
     MapAddActor(map, enemy, i, j);
 }
 
 // get views for players
-for(var index = 0; index &lt; ds_list_size(player_list); index++) {
-    var player = player_list[| index];
+for(var n = 0; n &lt; ds_list_size(player_list); n++) {
+    var player = player_list[| n];
     ActorCalculateFOV(player);
     MapAddFOV(map, player.view_list);
 }
 new_enemy_in_sight = false;
+
+//set view to player 1
+var player = player_list[| 0];
+view.x = player.x;
+view.y = player.y;
 
 state = GameState.NEXT_ROUND;
 shadow = NULL;
@@ -71,6 +77,7 @@ current_round = 0;
 current_actor = NULL;
 animation = false;
 focus_view_on_actor = NULL;
+player_turn = false;
 </string>
           </argument>
         </arguments>
@@ -120,94 +127,8 @@ shadow = MapDrawShadow(map, shadow, true);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// animation = NONE
+            <string>/// animation = false
 animation = false;
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="2">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>///View
-
-if !IS_MOBILE{
-    var zoom = 0;
-    if mouse_wheel_down() {
-        //zoom out. Increase view size
-        zoom = 1.1;
-    } else if mouse_wheel_up() {
-        //zoom in. decrease view size
-        zoom = 1/1.1;
-    }
-    scaleView(zoom);
-}
-
-if mouse_holding[0] {
-    focus_view_on_actor = NULL;
-    if mouse_holding[1] {
-        var d1 = point_distance(mouse_click_x[0], mouse_click_y[0], mouse_click_x[1], mouse_click_y[1]);
-        var d2 = point_distance(device_mouse_raw_x(0), device_mouse_raw_y(0), device_mouse_raw_x(1), device_mouse_raw_y(1));
-        
-        /*
-        var d1 = sqrt(sqr(mouse_click_x[0] - mouse_click_x[1]) + sqr(mouse_click_y[0] - mouse_click_y[1]));
-        var d2 = sqrt(sqr(mouse_raw_x[0] - mouse_raw_x[1]) + sqr(mouse_raw_y[0] - mouse_raw_y[1]));
-        */
-        
-        var zoom = d2/d1;
-        
-        var vx = view_xview + view_wview/2;
-        var vy = view_yview + view_hview/2;
-        
-        view_wview = clamp(view_wview/zoom, VIEW_WVIEW/VIEW_ZOOM_MAX, VIEW_WVIEW/VIEW_ZOOM_MIN);
-        view_hview = clamp(view_hview/zoom, VIEW_HVIEW/VIEW_ZOOM_MAX, VIEW_HVIEW/VIEW_ZOOM_MIN);
-        
-        view_xview = vx - view_wview/2;
-        view_yview = vy - view_hview/2;
-        
-        //update new mouse positions
-        for(var m = 0; m &lt; 2; m++) {
-            //save raw positions
-            mouse_click_x[m] = device_mouse_raw_x(m);
-            mouse_click_y[m] = device_mouse_raw_y(m);
-            //save map positions
-            mouse_x0[m] = device_mouse_x(m);
-            mouse_y0[m] = device_mouse_y(m);
-        }
-    } else {
-        //drag screen
-        view_xview += mouse_x0[0] - device_mouse_x(0);
-        view_yview += mouse_y0[0] - device_mouse_y(0);
-    }
-}
-
-if (focus_view_on_actor != NULL) {
-    var target_x = focus_view_on_actor.x - view_wview/2;
-    var target_y = focus_view_on_actor.y - view_hview/2;
-    if (point_distance(view_xview, view_yview, target_x, target_y) &lt; VIEW_FOCUS_SPEED) {
-        view_xview = target_x;
-        view_yview = target_y;
-    } else {
-        var dir = point_direction(view_xview, view_yview, target_x, target_y);
-        view_xview += lengthdir_x(VIEW_FOCUS_SPEED, dir);
-        view_yview += lengthdir_y(VIEW_FOCUS_SPEED, dir);
-    }
-}
 </string>
           </argument>
         </arguments>
@@ -273,19 +194,30 @@ if (state == GameState.NEXT_ROUND) {
 }
 
 if (state == GameState.NEXT_TURN) {
-    if ds_queue_size(round_queue) {
+    // get next actor
+    current_actor = NULL;
+    while((current_actor == NULL || ActorIsDead(current_actor))
+            &amp;&amp; ds_queue_size(round_queue)) {
         current_actor = ds_queue_dequeue(round_queue);
-        focus_view_on_actor = current_actor;
+    }
+    
+    if (current_actor == NULL || ActorIsDead(current_actor)) {
+        state = GameState.NEXT_ROUND;
+    } else {
+        show_debug_message(current_actor.name+"'s turn");
+        
+        current_actor.distance_moved = 0;
+        current_actor.state = ActorState.THINKING;
+        
         if (current_actor.is_player) {
             state = GameState.HIGHLIGHT_MOVE_AREA;
         } else {
             state = GameState.AI_TURN;
         }
-    } else {
-        state = GameState.NEXT_ROUND;
+        gameSetAnimation(ViewFocusOnActor(view, current_actor));
+        shadow = MapDrawShadow(map, shadow, false);
+        exit;
     }
-    current_actor.distance_moved = 0;
-    current_actor.state = ActorState.THINKING;
 }
 
 if (state == GameState.HIGHLIGHT_MOVE_AREA) {
@@ -306,15 +238,17 @@ if (state == GameState.PLAYER_TURN) {
                 if (actor == current_actor) {
                     //end turn
                     MapClearActiveView(map, current_actor.view_list);
-                    state = GameState.NEXT_TURN;
+                    state = GameState.END_PLAYER_TURN;
                     current_actor.state = ActorState.WAITING;
                 } else if (actor.alliance != current_actor.alliance) {
                     //attack
-                    if (MapDiagFree(map, actor.i, actor.j, current_actor.i, current_actor.j)) {
-                        ActorAttack(current_actor, actor);
-                        state = GameState.ACTOR_ATTACKING;
-                        gameSetAnimation(MOVE_TIME);
-                        current_actor.state = ActorState.WAITING;
+                    if (getTileDistance(current_actor.i, current_actor.j, actor.i, actor.j) &lt;= 1.5) {
+                        if (MapDiagFree(map, actor.i, actor.j, current_actor.i, current_actor.j)) {
+                            ActorAttack(current_actor, actor);
+                            state = GameState.ACTOR_ATTACKING;
+                            gameSetAnimation(ATTACK_TIME);
+                            current_actor.state = ActorState.ATTACKING;
+                        }
                     }
                 }
             } else {
@@ -332,8 +266,7 @@ if (state == GameState.PLAYER_TURN) {
 }
 
 if (state == GameState.AI_TURN) {
-    shadow = MapDrawShadow(map, shadow, false);
-    state = GameState.NEXT_TURN;
+    aiDecide(current_actor);
 }
 
 if (state == GameState.MOVE_ACTOR) {
@@ -345,8 +278,9 @@ if (state == GameState.MOVE_ACTOR) {
     } else if (ds_stack_size(current_actor.path_stack)) {
         gameSetAnimation(MOVE_TIME);
         ActorMove(current_actor);
-        if (current_actor.is_player)
+        if (current_actor.is_player) {
             alarm[1] = MOVE_TIME/2;
+        }
     } else {
         MapSetActor(map, current_actor);
         current_actor.state = ActorState.WAITING;
@@ -359,6 +293,16 @@ if (state == GameState.MOVE_ACTOR) {
 }
 
 if (state == GameState.ACTOR_ATTACKING) {
+    current_actor.state = ActorState.WAITING;
+    if (current_actor.is_player) {
+        state = GameState.END_PLAYER_TURN;
+    } else {
+        state = GameState.NEXT_TURN;
+    }
+}
+
+if (state == GameState.END_PLAYER_TURN) {
+    MapClearActiveView(map, current_actor.view_list);
     state = GameState.NEXT_TURN;
 }
 </string>
@@ -393,35 +337,6 @@ ds_queue_destroy(round_queue);
 if (shadow != NULL) {
     surface_free(shadow);
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="8" enumb="64">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>draw_set_alpha(1);
-
-draw_set_colour(c_black);
-draw_text_transformed(34, 34, "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789", 2, 2, 0);
-
-draw_set_colour(c_red);
-draw_text_transformed(32, 32, "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789", 2, 2, 0);
 </string>
           </argument>
         </arguments>

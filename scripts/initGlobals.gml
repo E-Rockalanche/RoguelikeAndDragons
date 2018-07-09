@@ -18,6 +18,7 @@ enum GameState {
     NEXT_TURN,
     HIGHLIGHT_MOVE_AREA,
     PLAYER_TURN,
+    END_PLAYER_TURN,
     AI_TURN,
     MOVE_ACTOR,
     MOVE_ACTORS,
@@ -28,3 +29,9 @@ enum SplashType {
     SPRITE,
     TEXT
 };
+
+enum ViewState {
+    MOVE_FOCUS_TO_ACTOR,
+    FOCUS_ON_ACTOR,
+    PLAYER_CONTROL
+}

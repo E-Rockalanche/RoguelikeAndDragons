@@ -1,7 +1,6 @@
 with(argument0) {
     var shadow = argument1;
     var focus_active_view = argument2;
-    var time = current_time;
     
     if (!surface_exists(shadow)) {
         shadow = surface_create(width, height);
@@ -40,6 +39,5 @@ with(argument0) {
     draw_set_blend_mode(bm_normal);
     draw_set_alpha(1);
     
-    console_time("MapDrawShadow", current_time - time);
     return shadow;
 }

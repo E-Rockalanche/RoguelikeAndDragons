@@ -3,7 +3,6 @@ with(argument0) {
     var j = argument2;
     var max_radius = argument3 + 0.5;
     var add_walls = argument4;
-    var time = current_time;
     
     /*
         \2|1/
@@ -22,6 +21,5 @@ with(argument0) {
     }
     ds_list_add(view, Point(i, j));
     ds_grid_destroy(mask);
-    console_time("MapGetFOV", current_time - time);
     return view;
 }

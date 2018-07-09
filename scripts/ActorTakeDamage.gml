@@ -3,7 +3,7 @@ with(argument0) {
     
     hp -= damage;
     
-    if (hp < 0) {
+    if (hp <= 0) {
         hp = 0;
         actorDie();
     } else if (hp > max_hp) {

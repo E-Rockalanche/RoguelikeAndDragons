@@ -99,6 +99,7 @@
       <script>scripts\ActorGetTileCost.gml</script>
       <script>scripts\ActorAttack.gml</script>
       <script>scripts\ActorTakeDamage.gml</script>
+      <script>scripts\ActorIsDead.gml</script>
       <script>scripts\actorDie.gml</script>
     </scripts>
     <scripts name="Point">
@@ -126,6 +127,7 @@
       <script>scripts\getTileDistance.gml</script>
       <script>scripts\diceRoll.gml</script>
       <script>scripts\findAtCoordsInList.gml</script>
+      <script>scripts\cubicInOutTween.gml</script>
     </scripts>
     <scripts name="ds_">
       <script>scripts\ds_grid_clone.gml</script>
@@ -168,6 +170,10 @@
     <scripts name="Splash">
       <script>scripts\SplashText.gml</script>
     </scripts>
+    <scripts name="View">
+      <script>scripts\ViewFocusOnActor.gml</script>
+    </scripts>
+    <script>scripts\aiDecide.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -178,14 +184,16 @@
     <object>objects\obj_game</object>
     <object>objects\obj_markov_controller</object>
     <object>objects\obj_splash</object>
+    <object>objects\obj_view</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>
-  <constants number="17">
+  <constants number="18">
     <constant name="NULL">-1</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_SIZE">16</constant>
+    <constant name="ATTACK_TIME">16</constant>
     <constant name="MOVE_TIME">4</constant>
     <constant name="MOUSE_HOLD_THRESHOLD">16</constant>
     <constant name="VIEW_ZOOM_MAX">2</constant>
