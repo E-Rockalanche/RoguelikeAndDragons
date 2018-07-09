@@ -2,19 +2,13 @@ with (argument0) {
     var actor = argument1;
     var x0 = actor.i;
     var y0 = actor.j;
-    var time = current_time;
     
     var distance = ActorGetMoveDistance(actor) + 0.5;// fudge so you can move diagonally on move distance of 1
     
-    if (movement_area_set) {
-        MapClearMovementArea(argument0);
-    }
+    MapClearMovementArea(argument0);
+    movement_grid[# x0, y0] = true;
     
-    ds_priority_add(open_list, Point(x0, y0), 0);
-    ds_grid_clear(movement_grid, false);
-    g_grid[# x0, y0] = 0;
-    open_grid[# x0, y0] = true;
-    parent_grid[# x0, y0] = NULL;
+    mapCellSetOpen(x0, y0, NULL, 0, 0);
     
     while(ds_priority_size(open_list)) {
         var parent_point = ds_priority_delete_min(open_list);
@@ -33,31 +27,29 @@ with (argument0) {
             var j = parent_j + dirs[d, 1];
             var flags = flag_grid[# i, j];
             
-            if (closed_grid[# i, j] || open_grid[# i, j] || (flags & TileFlag.SOLID))
+            if (closed_grid[# i, j]
+                    || open_grid[# i, j]
+                    || (flags & TileFlag.SOLID)
+                    || !MapDiagFree(argument0, parent_i, parent_j, i, j)) {
                 continue;
-            
-            if (flags & TileFlag.HAS_ACTOR) {
-                var other_actor = mapFindActor(i, j);
-                if (other_actor.alliance != actor.alliance)
-                    continue;
             }
             
-            var cur_cost = ActorGetTileCost(argument1, tile_grid[# i, j]) * (1 + (d >= 4)/2);
+            if (flags & TileFlag.HAS_ACTOR) {
+                var other_actor = findAtCoordsInList(actor_list, i, j);
+                if (other_actor.alliance != actor.alliance) {
+                    continue;
+                }
+            }
+            
+            var cur_cost = ActorGetTileCost(actor, tile_grid[# i, j]) * (1 + (d >= 4)/2);
             var child_g_cost = parent_g_cost + cur_cost;
                 
             if (child_g_cost <= distance) {
-                MapCellSetOpen(argument0, i, j, parent_point, child_g_cost, 0);
+                mapCellSetOpen(i, j, parent_point, child_g_cost, 0);
             }
         }
     }
-    for(var index = 0; index < ds_list_size(closed_list); index++) {
-        var point = closed_list[| index];
-        var i = PointGetX(point);
-        var j = PointGetY(point);
-        open_grid[# i, j] = false;
-        closed_grid[# i, j] = false;
-    }
-    ds_list_clear(closed_list);
+    
+    mapResetPathfinding();
     movement_area_set = true;
-    console_time("MapSetMovementArea", current_time - time);
 }

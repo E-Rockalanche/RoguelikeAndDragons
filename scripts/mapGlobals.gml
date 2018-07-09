@@ -9,12 +9,60 @@ enum TileFlag {
 };
 
 enum Tile {
-    WALL,
+    VOID,
     FLOOR,
-    MUD,
-    DOWN,
+    GRASS,
+    WELL,
+    WALL,
+    DOOR_CLOSED,
+    DOOR_OPEN,
+    STAIRS_UP,
+    STAIRS_DOWN,
+    ASH,
+    DOOR_LOCKED,
+    ALTAR,
+    WALL_DECAL,
+    BARRICADE,
+    BRIDGE,
+    GRASS_TALL,
+    DOOR_HIDDEN,
+    TRAP_POISON,
+    TRAP_POISON_HIDDEN,
+    TRAP_FIRE,
+    TRAP_FIRE_HIDDEN,
+    TRAP_PARALYSIS,
+    TRAP_PARALYSIS_HIDDEN,
+    TRAP_UNARMED,
+    FLOOR_DECAL,
+    EXIT_LOCKED,
+    EXIT,
+    TRAP_CONFUSION,
+    TRAP_CONFUSION_HIDDEN,
+    SIGN,
+    TRAP_ALARM,
+    TRAP_ALARM_HIDDEN,
+    TRAP_SUMMON,
+    TRAP_SUMMON_HIDDEN,
+    WELL_WATER,
+    STATUE,
+    STATUE2,
+    TRAP_BLEED,
+    TRAP_BLEED_HIDDEN,
+    TRAP_FREEZE,
+    TRAP_FREEZE_HIDDEN,
+    BOOKCASE,
+    POT,
+    FLOOR_EDGE,
+    BRIDGE_EDGE,
+    WALL_EDGE,
+    WATER_EDGE,
+    FLOOR_UNDERWATER,
+    WATER,
     LENGTH
 };
 globalvar tile_flags;
 tile_flags[Tile.LENGTH-1] = 0;//set size
 tile_flags[Tile.WALL] = TileFlag.SOLID | TileFlag.OBSTRUCTS_VIEW;
+tile_flags[Tile.DOOR_CLOSED] = TileFlag.OBSTRUCTS_VIEW;
+tile_flags[Tile.DOOR_LOCKED] = TileFlag.OBSTRUCTS_VIEW;
+tile_flags[Tile.DOOR_HIDDEN] = TileFlag.OBSTRUCTS_VIEW;

@@ -678,8 +678,9 @@
     <option_xbone_title_id></option_xbone_title_id>
   </Options>
   <ConfigConstants>
-    <constants number="1">
+    <constants number="2">
       <constant name="IS_MOBILE">false</constant>
+      <constant name="DEBUG">true</constant>
     </constants>
   </ConfigConstants>
 </Config>

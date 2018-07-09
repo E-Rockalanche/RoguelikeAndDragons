@@ -26,7 +26,7 @@
           <argument>
             <kind>1</kind>
             <string>initGlobals();
-map = Map(64, 64);
+map = Map(24, 24);
 MapGenerateOpenCave(map);
 MapSetTileFlags(map);
 MapPlaceTiles(map);
@@ -34,8 +34,6 @@ MapPlaceTiles(map);
 actor_list = MapGetActorList(map);
 player_list = ds_list_create();
 round_queue = ds_queue_create();
-
-view_list = ds_list_create();
 
 repeat(3) {
     show_debug_message("Placing player");
@@ -261,6 +259,8 @@ texture_set_interpolation(false);
             <kind>1</kind>
             <string>///Game loop
 
+step = (step+1) mod MAX_STEP;
+
 if (animation) exit;
 
 if (state == GameState.NEXT_ROUND) {
@@ -285,6 +285,7 @@ if (state == GameState.NEXT_TURN) {
         state = GameState.NEXT_ROUND;
     }
     current_actor.distance_moved = 0;
+    current_actor.state = ActorState.THINKING;
 }
 
 if (state == GameState.HIGHLIGHT_MOVE_AREA) {
@@ -303,14 +304,26 @@ if (state == GameState.PLAYER_TURN) {
             var actor = MapGetActor(map, i, j);
             if (actor != NULL) {
                 if (actor == current_actor) {
+                    //end turn
                     MapClearActiveView(map, current_actor.view_list);
                     state = GameState.NEXT_TURN;
+                    current_actor.state = ActorState.WAITING;
+                } else if (actor.alliance != current_actor.alliance) {
+                    //attack
+                    if (MapDiagFree(map, actor.i, actor.j, current_actor.i, current_actor.j)) {
+                        ActorAttack(current_actor, actor);
+                        state = GameState.ACTOR_ATTACKING;
+                        gameSetAnimation(MOVE_TIME);
+                        current_actor.state = ActorState.WAITING;
+                    }
                 }
             } else {
+                //move
                 var path = MapGetMovementAreaPathTo(map, i, j);
                 if (path != NULL) {
                     ActorSetPath(current_actor, path);
                     MapClearMovementArea(map);
+                    MapUnsetActor(map, current_actor);
                     state = GameState.MOVE_ACTOR;
                 }
             }
@@ -321,7 +334,6 @@ if (state == GameState.PLAYER_TURN) {
 if (state == GameState.AI_TURN) {
     shadow = MapDrawShadow(map, shadow, false);
     state = GameState.NEXT_TURN;
-    gameSetAnimation(MOVE_TIME);
 }
 
 if (state == GameState.MOVE_ACTOR) {
@@ -329,14 +341,15 @@ if (state == GameState.MOVE_ACTOR) {
         assert(current_actor.is_player, "player alerted of new enemy on ai turn");
         state = GameState.HIGHLIGHT_MOVE_AREA;
         new_enemy_in_sight = false;
+        MapSetActor(map, current_actor);
     } else if (ds_stack_size(current_actor.path_stack)) {
         gameSetAnimation(MOVE_TIME);
-        MapUnsetActor(map, current_actor);
         ActorMove(current_actor);
         if (current_actor.is_player)
             alarm[1] = MOVE_TIME/2;
     } else {
         MapSetActor(map, current_actor);
+        current_actor.state = ActorState.WAITING;
         if (current_actor.is_player) {
             state = GameState.HIGHLIGHT_MOVE_AREA;
         } else {
@@ -344,6 +357,71 @@ if (state == GameState.MOVE_ACTOR) {
         }
     }
 }
+
+if (state == GameState.ACTOR_ATTACKING) {
+    state = GameState.NEXT_TURN;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="3">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Destroy data
+
+MapDestroy(map);
+
+ds_list_destroy(player_list);
+ds_queue_destroy(round_queue);
+
+if (shadow != NULL) {
+    surface_free(shadow);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>draw_set_alpha(1);
+
+draw_set_colour(c_black);
+draw_text_transformed(34, 34, "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789", 2, 2, 0);
+
+draw_set_colour(c_red);
+draw_text_transformed(32, 32, "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789", 2, 2, 0);
 </string>
           </argument>
         </arguments>

@@ -34,11 +34,11 @@ for(var a = Attribute.LENGTH-1; a &gt;= 0; a--) {
     attributes[a] = 10;
 }
 
-current_hp = 10;
+hp = 10;
 max_hp = 10;
-current_mp = 10;
+mp = 10;
 max_mp = 10;
-current_sp = 10;
+sp = 10;
 max_sp = 10;
 </string>
           </argument>
@@ -62,14 +62,7 @@ max_sp = 10;
             <kind>1</kind>
             <string>///Actor equipment
 
-inventory = ds_list_create();
-
-head = NULL;
-body = NULL;
-arms = NULL;
-legs = NULL;
-feet = NULL;
-hands = NULL;
+inventory = Inventory();
 </string>
           </argument>
         </arguments>
@@ -92,11 +85,13 @@ hands = NULL;
             <kind>1</kind>
             <string>///Data
 
+depth = ACTOR_DEPTH;
 map = NULL;
+target = NULL;
 inventory = ds_list_create();
 path_stack = NULL;
 view_list = NULL;
-state = ActorState.READY;
+state = ActorState.WAITING;
 distance_moved = 0;
 is_player = false;
 
@@ -107,6 +102,38 @@ i = 0;
 j = 0;
 previous_i = 0;
 previous_j = 0;
+
+draw_x = x;
+draw_y = y;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>InventoryDestroy(inventory);
+if (path_stack != NULL) {
+    ds_stack_destroy(path_stack);
+}
+if (view_list != NULL) {
+    ds_list_destroy(view_list);
+}
 </string>
           </argument>
         </arguments>
@@ -129,8 +156,8 @@ previous_j = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///ready
-state = ActorState.READY;
+            <string>///waiting
+state = ActorState.WAITING;
 hspeed = 0;
 vspeed = 0;
 </string>
@@ -155,10 +182,17 @@ vspeed = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///set draw coordinates
+            <string>///Set draw coordinates
 if (state != ActorState.MOVING) {
     x = (0.5 + i) * TILE_SIZE;
     y = (0.5 + j) * TILE_SIZE;
+}
+
+draw_x = x;
+draw_y = y;
+
+if (state == ActorState.THINKING) {
+    draw_y -= ((step mod 32) &lt; 16);
 }
 </string>
           </argument>
@@ -183,7 +217,7 @@ if (state != ActorState.MOVING) {
           <argument>
             <kind>1</kind>
             <string>///Draw self
-draw_sprite(sprite_index, image_index, x, y);
+draw_sprite(sprite_index, image_index, draw_x, draw_y);
 </string>
           </argument>
         </arguments>

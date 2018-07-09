@@ -1,16 +1,17 @@
 randomize();
 
-globalvar delta;
+globalvar deltam step, new_enemy_in_sight;
 delta = 1;
+step = 0;
+new_enemy_in_sight = false;
+
+draw_set_font(fnt_default);
 
 setViewPort();
 mouseGlobals();
 setDirs();
 actorGlobals();
 mapGlobals();
-
-globalvar new_enemy_in_sight;
-new_enemy_in_sight = false;
 
 enum GameState {
     NEXT_ROUND,
@@ -19,5 +20,11 @@ enum GameState {
     PLAYER_TURN,
     AI_TURN,
     MOVE_ACTOR,
-    MOVE_ACTORS
+    MOVE_ACTORS,
+    ACTOR_ATTACKING
+};
+
+enum SplashType {
+    SPRITE,
+    TEXT
 };

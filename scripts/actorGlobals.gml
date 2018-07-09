@@ -14,9 +14,11 @@ enum Attribute {
 };
 
 enum ActorState {
+    WAITING,
+    THINKING,
     MOVING,
     ATTACKING,
-    READY
+    DEAD
 };
 
 enum Alliance {
