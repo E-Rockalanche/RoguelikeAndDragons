@@ -8,10 +8,15 @@
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\spr_player</sprite>
-    <sprite>sprites\spr_enemy</sprite>
+    <sprite>sprites\spr_snake</sprite>
     <sprite>sprites\spr_controller</sprite>
+    <sprite>sprites\spr_camera</sprite>
     <sprite>sprites\spr_map</sprite>
     <sprite>sprites\spr_bones</sprite>
+    <sprite>sprites\spr_orc</sprite>
+    <sprite>sprites\spr_stunned</sprite>
+    <sprite>sprites\spr_bleeding</sprite>
+    <sprite>sprites\spr_poisoned</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bkr_tile_highlights</background>
@@ -24,11 +29,9 @@
   <scripts name="scripts">
     <scripts name="globals">
       <script>scripts\initGlobals.gml</script>
+      <script>scripts\gameGlobals.gml</script>
       <script>scripts\mouseGlobals.gml</script>
       <script>scripts\setDirs.gml</script>
-      <script>scripts\actorGlobals.gml</script>
-      <script>scripts\mapGlobals.gml</script>
-      <script>scripts\setViewPort.gml</script>
     </scripts>
     <scripts name="Map">
       <scripts name="FOV">
@@ -65,6 +68,7 @@
         <script>scripts\mapResetPathfinding.gml</script>
         <script>scripts\mapCellSetOpen.gml</script>
       </scripts>
+      <script>scripts\mapGlobals.gml</script>
       <script>scripts\Map.gml</script>
       <script>scripts\MapDestroy.gml</script>
       <script>scripts\MapPositionFree.gml</script>
@@ -87,10 +91,23 @@
       <scripts name="stats">
         <script>scripts\ActorGetMoveDistance.gml</script>
         <script>scripts\ActorGetViewDistance.gml</script>
-        <script>scripts\ActorGetDamage.gml</script>
       </scripts>
+      <scripts name="Enemy">
+        <script>scripts\Enemy.gml</script>
+        <script>scripts\Snake.gml</script>
+        <script>scripts\Orc.gml</script>
+      </scripts>
+      <scripts name="conditions">
+        <script>scripts\ActorAddCondition.gml</script>
+        <script>scripts\ActorConditionEffects.gml</script>
+        <script>scripts\ActorReduceConditionTimers.gml</script>
+        <script>scripts\ActorHasCondition.gml</script>
+        <script>scripts\ActorRemoveCondition.gml</script>
+        <script>scripts\ActorClearConditions.gml</script>
+      </scripts>
+      <script>scripts\actorGlobals.gml</script>
       <script>scripts\Player.gml</script>
-      <script>scripts\Enemy.gml</script>
+      <script>scripts\ActorDestroy.gml</script>
       <script>scripts\ActorSetPosition.gml</script>
       <script>scripts\ActorSetPath.gml</script>
       <script>scripts\ActorAnimatePath.gml</script>
@@ -98,9 +115,14 @@
       <script>scripts\ActorMove.gml</script>
       <script>scripts\ActorGetTileCost.gml</script>
       <script>scripts\ActorAttack.gml</script>
+      <script>scripts\ActorGetDamage.gml</script>
       <script>scripts\ActorTakeDamage.gml</script>
+      <script>scripts\ActorReduceHealth.gml</script>
       <script>scripts\ActorIsDead.gml</script>
+      <script>scripts\ActorGetArmour.gml</script>
       <script>scripts\actorDie.gml</script>
+      <script>scripts\actorModifyDamage.gml</script>
+      <script>scripts\ActorDebug.gml</script>
     </scripts>
     <scripts name="Point">
       <script>scripts\Point.gml</script>
@@ -116,6 +138,21 @@
       <script>scripts\mouseRawInBox.gml</script>
     </scripts>
     <scripts name="functions">
+      <scripts name="ds_">
+        <script>scripts\ds_grid_clone.gml</script>
+        <script>scripts\ds_grid_generate_blobs.gml</script>
+        <script>scripts\ds_grid_seed_blobs.gml</script>
+        <script>scripts\ds_grid_smooth_blobs.gml</script>
+        <script>scripts\ds_grid_flood_fill.gml</script>
+        <script>scripts\ds_grid_set_flag.gml</script>
+        <script>scripts\ds_grid_unset_flag.gml</script>
+        <script>scripts\ds_grid_has_flag.gml</script>
+        <script>scripts\ds_list_delete_value.gml</script>
+        <script>scripts\ds_list_destroy_if_exists.gml</script>
+        <script>scripts\ds_list_get_random.gml</script>
+        <script>scripts\ds_list_debug.gml</script>
+        <script>scripts\ds_stack_reverse.gml</script>
+      </scripts>
       <script>scripts\assert.gml</script>
       <script>scripts\getBit.gml</script>
       <script>scripts\withinBounds.gml</script>
@@ -125,27 +162,17 @@
       <script>scripts\console_time.gml</script>
       <script>scripts\scaleView.gml</script>
       <script>scripts\getTileDistance.gml</script>
-      <script>scripts\diceRoll.gml</script>
+      <script>scripts\rollDice.gml</script>
       <script>scripts\findAtCoordsInList.gml</script>
       <script>scripts\cubicInOutTween.gml</script>
-    </scripts>
-    <scripts name="ds_">
-      <script>scripts\ds_grid_clone.gml</script>
-      <script>scripts\ds_grid_generate_blobs.gml</script>
-      <script>scripts\ds_grid_seed_blobs.gml</script>
-      <script>scripts\ds_grid_smooth_blobs.gml</script>
-      <script>scripts\ds_grid_flood_fill.gml</script>
-      <script>scripts\ds_grid_set_flag.gml</script>
-      <script>scripts\ds_grid_unset_flag.gml</script>
-      <script>scripts\ds_grid_has_flag.gml</script>
-      <script>scripts\ds_list_delete_value.gml</script>
-      <script>scripts\ds_list_destroy_if_exists.gml</script>
-      <script>scripts\ds_list_get_random.gml</script>
-      <script>scripts\ds_list_debug.gml</script>
-      <script>scripts\ds_stack_reverse.gml</script>
+      <script>scripts\toGuiX.gml</script>
+      <script>scripts\toGuiY.gml</script>
+      <script>scripts\string_capitalize.gml</script>
+      <script>scripts\setViewPort.gml</script>
     </scripts>
     <scripts name="Game">
       <script>scripts\gameSetAnimation.gml</script>
+      <script>scripts\aiDecide.gml</script>
     </scripts>
     <scripts name="MarkovController">
       <scripts name="MarkovChain">
@@ -169,11 +196,72 @@
     </scripts>
     <scripts name="Splash">
       <script>scripts\SplashText.gml</script>
+      <script>scripts\SplashDamage.gml</script>
     </scripts>
     <scripts name="View">
       <script>scripts\ViewFocusOnActor.gml</script>
     </scripts>
-    <script>scripts\aiDecide.gml</script>
+    <scripts name="Item">
+      <script>scripts\Item.gml</script>
+      <script>scripts\ItemDestroy.gml</script>
+      <script>scripts\itemGlobals.gml</script>
+      <scripts name="Weapon">
+        <script>scripts\Weapon.gml</script>
+        <script>scripts\WeaponGetDamage.gml</script>
+        <scripts name="weapons">
+          <script>scripts\Sword.gml</script>
+          <script>scripts\Mace.gml</script>
+          <script>scripts\Rapier.gml</script>
+        </scripts>
+      </scripts>
+      <scripts name="Armour">
+        <script>scripts\Armour.gml</script>
+        <script>scripts\ArmourGetDefense.gml</script>
+        <script>scripts\Leather.gml</script>
+        <script>scripts\Scale.gml</script>
+        <script>scripts\Plate.gml</script>
+      </scripts>
+      <scripts name="Food">
+        <script>scripts\Food.gml</script>
+      </scripts>
+    </scripts>
+    <scripts name="Damage">
+      <script>scripts\damageGlobals.gml</script>
+      <script>scripts\Damage.gml</script>
+      <script>scripts\DamageDestroy.gml</script>
+      <script>scripts\DamageGetLow.gml</script>
+      <script>scripts\DamageGetHigh.gml</script>
+      <script>scripts\DamageGetType.gml</script>
+      <script>scripts\DamageCalculate.gml</script>
+      <script>scripts\DamageSetLow.gml</script>
+      <script>scripts\DamageSetHigh.gml</script>
+    </scripts>
+    <scripts name="Condition">
+      <script>scripts\conditionGlobals.gml</script>
+      <script>scripts\ConditionDestroy.gml</script>
+      <script>scripts\ConditionGetType.gml</script>
+      <script>scripts\ConditionGetName.gml</script>
+      <script>scripts\ConditionGetIcon.gml</script>
+      <script>scripts\ConditionCombine.gml</script>
+      <script>scripts\ConditionHasRoundEffect.gml</script>
+      <script>scripts\ConditionAffectActor.gml</script>
+      <script>scripts\ConditionReduceTimer.gml</script>
+      <script>scripts\ConditionGetTime.gml</script>
+      <scripts name="Bleed">
+        <script>scripts\Bleed.gml</script>
+        <script>scripts\BleedCombine.gml</script>
+        <script>scripts\BleedAffectActor.gml</script>
+      </scripts>
+      <scripts name="Stun">
+        <script>scripts\Stun.gml</script>
+        <script>scripts\StunCombine.gml</script>
+      </scripts>
+      <scripts name="Poison">
+        <script>scripts\Poison.gml</script>
+        <script>scripts\PoisonCombine.gml</script>
+        <script>scripts\PoisonAffectActor.gml</script>
+      </scripts>
+    </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -182,15 +270,15 @@
     <object>objects\obj_actor</object>
     <object>objects\obj_map</object>
     <object>objects\obj_game</object>
+    <object>objects\obj_view</object>
     <object>objects\obj_markov_controller</object>
     <object>objects\obj_splash</object>
-    <object>objects\obj_view</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>
-  <constants number="18">
-    <constant name="NULL">-1</constant>
+  <constants number="22">
+    <constant name="NULL">-5</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_SIZE">16</constant>
     <constant name="ATTACK_TIME">16</constant>
@@ -200,14 +288,18 @@
     <constant name="VIEW_ZOOM_MIN">0.05</constant>
     <constant name="CLICK_TIME">10</constant>
     <constant name="VIEW_FOCUS_SPEED">16</constant>
-    <constant name="TILE_DEPTH">5</constant>
-    <constant name="HIGHLIGHT_DEPTH">4</constant>
-    <constant name="OBJECT_DEPTH">3</constant>
-    <constant name="ITEM_DEPTH">2</constant>
-    <constant name="ACTOR_DEPTH">1</constant>
+    <constant name="TILE_DEPTH">6</constant>
+    <constant name="HIGHLIGHT_DEPTH">5</constant>
+    <constant name="OBJECT_DEPTH">4</constant>
+    <constant name="ITEM_DEPTH">3</constant>
+    <constant name="ACTOR_DEPTH">2</constant>
+    <constant name="CONDITION_DEPTH">1</constant>
     <constant name="SPLASH_DEPTH">0</constant>
     <constant name="MOVE_DISTANCE_FUDGE">0.5</constant>
     <constant name="MAX_STEP">1024</constant>
+    <constant name="MAX_INT">2147483647</constant>
+    <constant name="FOREVER">2147483647</constant>
+    <constant name="ROUND_TIME">6</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

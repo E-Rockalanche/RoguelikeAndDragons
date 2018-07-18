@@ -1,6 +1,6 @@
-globalvar ASPECT_RATIO, VIEW_WVIEW, VIEW_HVIEW, dwidth, dheight, HUD_SCALE;
+display_orientation = display_get_orientation();
 
-if (DEBUG || IS_MOBILE){
+if (DEBUG && !IS_MOBILE){
     dwidth = view_wport;
     dheight = view_hport;
     window_set_fullscreen(false);

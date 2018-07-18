@@ -1,6 +1,9 @@
-var new_enemy = instance_create(0, 0, obj_actor);
-with(new_enemy) {
-    sprite_index = spr_enemy;
-    alliance = Alliance.BAD;
+switch(choose(1, 2)) {
+    case 1:
+        return Snake();
+    break;
+    
+    case 2:
+        return Orc();
+    break;
 }
-return new_enemy;

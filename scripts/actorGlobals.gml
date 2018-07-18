@@ -1,9 +1,3 @@
-enum Race {
-    HUMAN,
-    ELF,
-    LENGTH
-};
-
 enum Attribute {
     STRENGTH,
     AGILITY,

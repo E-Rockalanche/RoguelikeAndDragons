@@ -1,20 +1,28 @@
 with(argument0) {
     var damage = argument1;
     
-    hp -= damage;
-    
-    if (hp <= 0) {
-        hp = 0;
-        actorDie();
-    } else if (hp > max_hp) {
-        hp = max_hp;
+    var total = 0;
+    if (damage != NULL) {
+        total = actorModifyDamage(DamageCalculate(damage), DamageGetType(damage));
+        if (total > 0 && chance(50)) {
+            switch(DamageGetType(damage)) {
+                case DamageType.BLUDGEONING:
+                    ActorAddCondition(id, Stun(ROUND_TIME));
+                    SplashText(x, y-16, "Stunned", c_yellow);
+                break;
+                
+                case DamageType.SLASHING:
+                    ActorAddCondition(id, Bleed(1, 4 * ROUND_TIME));
+                    SplashText(x, y-16, "Bleeding", c_red);
+                break;
+                
+                case DamageType.PIERCING:
+                    ActorAddCondition(id, Poison(1, 4 * ROUND_TIME));
+                    SplashText(x, y-16, "Poisoned", c_purple);
+                break;
+            }
+        }
     }
     
-    var text_colour = c_red;
-    if (damage == 0) {
-        text_colour = c_white;
-    } else if (damage < 0) {
-        text_colour = c_green;
-    }
-    SplashText(x, y, string(damage), text_colour);
+    ActorReduceHealth(id, total);
 }

@@ -25,8 +25,8 @@ with (argument0) {
         ds_list_add(closed_list, parent_point);
         var parent_g_cost = g_grid[# parent_i, parent_j];
         for(var d = 0; d < 8; d++) {
-            var i = parent_i + dirs[d, 0];
-            var j = parent_j + dirs[d, 1];
+            var i = parent_i + x_dirs[d];
+            var j = parent_j + y_dirs[d];
             var flags = flag_grid[# i, j];
             
             if (closed_grid[# i, j]

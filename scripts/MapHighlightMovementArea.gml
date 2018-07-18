@@ -4,8 +4,8 @@ with(argument0) {
             if (movement_grid[# i, j]) {
                 var index = 0;
                 for(var d = 0; d < 4; d++) {
-                    var ii = i + dirs[d, 0];
-                    var jj = j + dirs[d, 1];
+                    var ii = i + x_dirs[d];
+                    var jj = j + y_dirs[d];
                     if (withinBounds(ii, jj, 0, 0, width, height)) {
                         if (movement_grid[# ii, jj]) {
                             index |= 1 << d;

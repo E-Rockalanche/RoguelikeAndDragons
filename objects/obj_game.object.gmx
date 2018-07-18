@@ -48,7 +48,7 @@ for(var n = 0; n &lt; 3; n++) {
     ds_list_add(player_list, player);
 }
 
-for(var n = 0; n &lt; 3; n++) {
+for(var n = 0; n &lt; 5; n++) {
     do{
         i = irandom_range(1, map.width-2);
         j = irandom_range(1, map.height-2);
@@ -101,7 +101,7 @@ player_turn = false;
           <argument>
             <kind>1</kind>
             <string>/// Set new player FOV
-MapRemoveFOV(map, current_actor.view_list, true);
+MapRemoveFOV(map, current_actor.view_list);
 ActorCalculateFOV(current_actor);
 MapAddFOV(map, current_actor.view_list, true);
 shadow = MapDrawShadow(map, shadow, true);
@@ -156,6 +156,10 @@ animation = false;
 updateMouse();
 
 texture_set_interpolation(false);
+
+if (display_get_orientation() != display_orientation) {
+    setViewPort();
+}
 </string>
           </argument>
         </arguments>
@@ -209,20 +213,39 @@ if (state == GameState.NEXT_TURN) {
         current_actor.distance_moved = 0;
         current_actor.state = ActorState.THINKING;
         
-        if (current_actor.is_player) {
-            state = GameState.HIGHLIGHT_MOVE_AREA;
-        } else {
-            state = GameState.AI_TURN;
-        }
+        state = GameState.TURN_START;
         gameSetAnimation(ViewFocusOnActor(view, current_actor));
         shadow = MapDrawShadow(map, shadow, false);
         exit;
     }
 }
 
+if (state == GameState.TURN_START) {
+    if (current_actor.is_player) {
+        MapSetActiveFOV(map, current_actor.view_list);
+        shadow = MapDrawShadow(map, shadow, true);
+    }
+    
+    ActorConditionEffects(current_actor);
+    
+    if (ActorHasCondition(current_actor, Condition.STUNNED)) {
+        state = GameState.NEXT_TURN;
+    } else {
+        if (ActorIsDead(current_actor)) {
+            state = GameState.NEXT_TURN;
+        } else {
+            if (current_actor.is_player) {
+                state = GameState.HIGHLIGHT_MOVE_AREA;
+            } else {
+                state = GameState.AI_TURN;
+            }
+        }
+    }
+    
+    ActorReduceConditionTimers(current_actor, ROUND_TIME);
+}
+
 if (state == GameState.HIGHLIGHT_MOVE_AREA) {
-    MapSetActiveFOV(map, current_actor.view_list);
-    shadow = MapDrawShadow(map, shadow, true);
     MapSetMovementArea(map, current_actor);
     MapHighlightMovementArea(map);
     state = GameState.PLAYER_TURN;
@@ -237,7 +260,6 @@ if (state == GameState.PLAYER_TURN) {
             if (actor != NULL) {
                 if (actor == current_actor) {
                     //end turn
-                    MapClearActiveView(map, current_actor.view_list);
                     state = GameState.END_PLAYER_TURN;
                     current_actor.state = ActorState.WAITING;
                 } else if (actor.alliance != current_actor.alliance) {
@@ -302,7 +324,7 @@ if (state == GameState.ACTOR_ATTACKING) {
 }
 
 if (state == GameState.END_PLAYER_TURN) {
-    MapClearActiveView(map, current_actor.view_list);
+    shadow = MapDrawShadow(map, shadow, false);
     state = GameState.NEXT_TURN;
 }
 </string>
@@ -360,6 +382,10 @@ if (shadow != NULL) {
           <argument>
             <kind>1</kind>
             <string>///Draw shadow
+if (!surface_exists(shadow)) {
+    var active_view = (current_actor != NULL &amp;&amp; current_actor.is_player);
+    shadow = MapDrawShadow(map, shadow, active_view);
+}
 draw_surface_ext(shadow, 0, 0, TILE_SIZE, TILE_SIZE, 0, c_white, 1);
 </string>
           </argument>

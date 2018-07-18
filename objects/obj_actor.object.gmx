@@ -28,18 +28,16 @@
             <string>///Default stats
 
 name = "Default";
-race = Race.HUMAN;
 
 for(var a = Attribute.LENGTH-1; a &gt;= 0; a--) {
     attributes[a] = 10;
 }
 
-hp = 10;
-max_hp = 10;
-mp = 10;
-max_mp = 10;
-sp = 10;
-max_sp = 10;
+unarmed_damage = NULL;
+natural_armour = 0;
+
+max_hp = irandom_range(10, 20);
+hp = max_hp;
 </string>
           </argument>
         </arguments>
@@ -63,6 +61,10 @@ max_sp = 10;
             <string>///Actor equipment
 
 inventory = Inventory();
+
+rhand = NULL;
+lhand = NULL;
+body = NULL;
 </string>
           </argument>
         </arguments>
@@ -88,12 +90,13 @@ inventory = Inventory();
 depth = ACTOR_DEPTH;
 map = NULL;
 target = NULL;
-inventory = ds_list_create();
 path_stack = NULL;
 view_list = NULL;
 state = ActorState.WAITING;
 distance_moved = 0;
 is_player = false;
+
+conditions = ds_list_create();
 
 in_view = false;
 was_in_view = false;
@@ -134,6 +137,13 @@ if (path_stack != NULL) {
 if (view_list != NULL) {
     ds_list_destroy(view_list);
 }
+
+DamageDestroy(unarmed_damage);
+ItemDestroy(rhand);
+ItemDestroy(lhand);
+
+ActorClearConditions(id);
+ds_list_destroy(conditions);
 </string>
           </argument>
         </arguments>
@@ -199,6 +209,47 @@ if (state == ActorState.THINKING) {
         </arguments>
       </action>
     </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// debug
+if (DEBUG) {
+    if (position_meeting(mouse_x, mouse_y, id)) {
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        var text = ActorDebug(id);
+        var gui_x = toGuiX(x + TILE_SIZE/2);
+        var gui_y = toGuiY(y - TILE_SIZE/2);
+        var text_width = string_width(text);
+        var text_height = string_height(text);
+        
+        draw_set_colour(c_black);
+        draw_set_alpha(0.5);
+        draw_rectangle(gui_x, gui_y, gui_x + text_width, gui_y + text_height, false);
+        draw_set_colour(c_white);
+        draw_set_alpha(1);
+        draw_text(gui_x, gui_y, text);
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
     <event eventtype="8" enumb="0">
       <action>
         <libid>1</libid>
@@ -218,6 +269,12 @@ if (state == ActorState.THINKING) {
             <kind>1</kind>
             <string>///Draw self
 draw_sprite(sprite_index, image_index, draw_x, draw_y);
+
+var gap = 6;
+var left = draw_x - (ds_list_size(conditions)-1)/2 * gap;
+for(var n = 0; n &lt; ds_list_size(conditions); n++) {
+    draw_sprite(ConditionGetIcon(conditions[| n]), 0, left + n*gap, draw_y - 12);
+}
 </string>
           </argument>
         </arguments>
