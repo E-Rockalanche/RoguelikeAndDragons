@@ -59,6 +59,8 @@
         <scripts name="astar">
           <script>scripts\MapAstarFindPath.gml</script>
           <script>scripts\MapAstarFindClosestPath.gml</script>
+          <script>scripts\MapGetPathToClosestActor.gml</script>
+          <script>scripts\mapAstarFindGoal.gml</script>
         </scripts>
         <script>scripts\MapGetPathCost.gml</script>
         <script>scripts\MapGetPathTo.gml</script>
@@ -152,6 +154,7 @@
         <script>scripts\ds_list_get_random.gml</script>
         <script>scripts\ds_list_debug.gml</script>
         <script>scripts\ds_stack_reverse.gml</script>
+        <script>scripts\ds_list_delete_return.gml</script>
       </scripts>
       <script>scripts\assert.gml</script>
       <script>scripts\getBit.gml</script>
@@ -172,7 +175,9 @@
     </scripts>
     <scripts name="Game">
       <script>scripts\gameSetAnimation.gml</script>
-      <script>scripts\aiDecide.gml</script>
+      <script>scripts\aiTurn.gml</script>
+      <script>scripts\endTurn.gml</script>
+      <script>scripts\moveActor.gml</script>
     </scripts>
     <scripts name="MarkovController">
       <scripts name="MarkovChain">
@@ -262,6 +267,15 @@
         <script>scripts\PoisonAffectActor.gml</script>
       </scripts>
     </scripts>
+    <scripts name="Path">
+      <script>scripts\Path.gml</script>
+      <script>scripts\PathDestroy.gml</script>
+      <script>scripts\PathPushPoint.gml</script>
+      <script>scripts\PathPop.gml</script>
+      <script>scripts\PathNext.gml</script>
+      <script>scripts\PathSize.gml</script>
+    </scripts>
+    <script>scripts\MapDebugPosition.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -275,7 +289,7 @@
     <object>objects\obj_splash</object>
   </objects>
   <rooms name="rooms">
-    <room>rooms\room0</room>
+    <room>rooms\rm_game</room>
   </rooms>
   <constants number="22">
     <constant name="NULL">-5</constant>

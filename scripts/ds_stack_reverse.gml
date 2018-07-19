@@ -5,3 +5,4 @@ while(ds_stack_size(stack)) {
 }
 ds_stack_copy(stack, temp);
 ds_stack_destroy(temp);
+return stack;

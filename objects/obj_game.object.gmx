@@ -261,11 +261,11 @@ if (state == GameState.PLAYER_TURN) {
                 if (actor == current_actor) {
                     //end turn
                     state = GameState.END_PLAYER_TURN;
-                    current_actor.state = ActorState.WAITING;
                 } else if (actor.alliance != current_actor.alliance) {
                     //attack
                     if (getTileDistance(current_actor.i, current_actor.j, actor.i, actor.j) &lt;= 1.5) {
                         if (MapDiagFree(map, actor.i, actor.j, current_actor.i, current_actor.j)) {
+                            MapClearMovementArea(map);
                             ActorAttack(current_actor, actor);
                             state = GameState.ACTOR_ATTACKING;
                             gameSetAnimation(ATTACK_TIME);
@@ -277,10 +277,8 @@ if (state == GameState.PLAYER_TURN) {
                 //move
                 var path = MapGetMovementAreaPathTo(map, i, j);
                 if (path != NULL) {
-                    ActorSetPath(current_actor, path);
                     MapClearMovementArea(map);
-                    MapUnsetActor(map, current_actor);
-                    state = GameState.MOVE_ACTOR;
+                    moveActor(path);
                 }
             }
         }
@@ -288,7 +286,7 @@ if (state == GameState.PLAYER_TURN) {
 }
 
 if (state == GameState.AI_TURN) {
-    aiDecide(current_actor);
+    aiTurn();
 }
 
 if (state == GameState.MOVE_ACTOR) {
@@ -297,7 +295,7 @@ if (state == GameState.MOVE_ACTOR) {
         state = GameState.HIGHLIGHT_MOVE_AREA;
         new_enemy_in_sight = false;
         MapSetActor(map, current_actor);
-    } else if (ds_stack_size(current_actor.path_stack)) {
+    } else if (PathSize(current_actor.path_stack)) {
         gameSetAnimation(MOVE_TIME);
         ActorMove(current_actor);
         if (current_actor.is_player) {
@@ -324,8 +322,9 @@ if (state == GameState.ACTOR_ATTACKING) {
 }
 
 if (state == GameState.END_PLAYER_TURN) {
+    MapClearMovementArea(map);
     shadow = MapDrawShadow(map, shadow, false);
-    state = GameState.NEXT_TURN;
+    endTurn();
 }
 </string>
           </argument>
@@ -358,6 +357,55 @@ ds_queue_destroy(round_queue);
 
 if (shadow != NULL) {
     surface_free(shadow);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// debug
+if (DEBUG) {
+    var i = mouse_x div TILE_SIZE;
+    var j = mouse_y div TILE_SIZE;
+    if (withinBounds(i, j, 0, 0, map.width, map.height)) {
+        var text;
+        var actor = MapGetActor(map, i, j);
+        if (actor != NULL) {
+            text = ActorDebug(actor);
+        } else {
+            text = MapDebugPosition(map, i, j);
+        }
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        var gui_x = toGuiX((i+0.5) * TILE_SIZE);
+        var gui_y = toGuiY((j+0.5) * TILE_SIZE);
+        var text_width = string_width(text);
+        var text_height = string_height(text);
+        
+        draw_set_colour(c_black);
+        draw_set_alpha(0.5);
+        draw_rectangle(gui_x, gui_y, gui_x + text_width, gui_y + text_height, false);
+        draw_set_colour(c_white);
+        draw_set_alpha(1);
+        draw_text(gui_x, gui_y, text);
+    }
 }
 </string>
           </argument>

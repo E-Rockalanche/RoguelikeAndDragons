@@ -3,6 +3,9 @@ with(new_player) {
     sprite_index = spr_player;
     alliance = Alliance.GOOD;
     is_player = true;
+    
+    max_hp = 20;
+    hp = max_hp;
 
     var weapon = NULL;
     switch(choose(1, 2, 3)) {

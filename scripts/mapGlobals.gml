@@ -60,9 +60,19 @@ enum Tile {
     WATER,
     LENGTH
 };
+
 globalvar tile_flags;
 tile_flags[Tile.LENGTH-1] = 0;//set size
 tile_flags[Tile.WALL] = TileFlag.SOLID | TileFlag.OBSTRUCTS_VIEW;
 tile_flags[Tile.DOOR_CLOSED] = TileFlag.OBSTRUCTS_VIEW;
 tile_flags[Tile.DOOR_LOCKED] = TileFlag.OBSTRUCTS_VIEW;
 tile_flags[Tile.DOOR_HIDDEN] = TileFlag.OBSTRUCTS_VIEW;
+
+globalvar tile_names;
+tile_names[Tile.WALL] = "Wall";
+tile_names[Tile.FLOOR] = "Floor";
+tile_names[Tile.VOID] = "Void";
+tile_names[Tile.GRASS] = "Grass";
+tile_names[Tile.GRASS_TALL] = "Tall grass";
+tile_names[Tile.WALL_DECAL] = "Wall decal";
+tile_names[Tile.FLOOR_DECAL] = "Floor decal";
