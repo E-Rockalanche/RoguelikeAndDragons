@@ -27,7 +27,7 @@
             <kind>1</kind>
             <string>initGlobals();
 map = Map(32, 32);
-MapGenerateCave(map);
+MapGenerateDungeon(map);
 
 actor_list = MapGetActorList(map);
 player_list = ds_list_create();
