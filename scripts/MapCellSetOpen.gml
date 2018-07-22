@@ -1,3 +1,7 @@
+/*
+executed by obj_map
+*/
+
 var i = argument0;
 var j = argument1;
 var parent_point = argument2;

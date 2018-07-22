@@ -11,6 +11,11 @@ setViewPort();
 
 draw_set_font(fnt_default);
 
+enum WorldState {
+    EXPLORE,
+    BATTLE
+}
+
 enum GameState {
     NEXT_ROUND,
     NEXT_TURN,

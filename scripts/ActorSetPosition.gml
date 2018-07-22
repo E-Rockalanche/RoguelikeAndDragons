@@ -5,6 +5,8 @@ Note:
 */
 
 with(argument0) {
+    previous_i = i;
+    previous_j = j;
     i = argument1;
     j = argument2;
 }

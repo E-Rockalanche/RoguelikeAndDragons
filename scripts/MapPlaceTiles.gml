@@ -10,7 +10,7 @@ with(argument0) {
             
             var left = (tile mod 16) * TILE_SIZE;
             var top = (tile div 16) * TILE_SIZE;
-            tile_add(bkr_tiles_cave, left, top, TILE_SIZE, TILE_SIZE, i*TILE_SIZE, j*TILE_SIZE, TILE_DEPTH);
+            tile_add(background, left, top, TILE_SIZE, TILE_SIZE, i*TILE_SIZE, j*TILE_SIZE, TILE_DEPTH);
         }
     }
 }

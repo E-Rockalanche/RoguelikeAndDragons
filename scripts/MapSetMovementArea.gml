@@ -3,7 +3,7 @@ with (argument0) {
     var x0 = actor.i;
     var y0 = actor.j;
     
-    var distance = ActorGetMoveDistance(actor) + 0.5;// fudge so you can move diagonally on move distance of 1
+    var distance = ActorGetMoveDistance(actor) + MOVE_DISTANCE_FUDGE;
     
     MapClearMovementArea(argument0);
     movement_grid[# x0, y0] = true;
@@ -30,6 +30,7 @@ with (argument0) {
             if (closed_grid[# i, j]
                     || open_grid[# i, j]
                     || (flags & TileFlag.SOLID)
+                    || !view_grid[# i, j]
                     || !MapDiagFree(argument0, parent_i, parent_j, i, j)) {
                 continue;
             }

@@ -46,9 +46,30 @@
         <script>scripts\MapDrawShadow.gml</script>
       </scripts>
       <scripts name="generation">
+        <scripts name="Room">
+          <script>scripts\Room.gml</script>
+          <script>scripts\RoomGetLeft.gml</script>
+          <script>scripts\RoomGetTop.gml</script>
+          <script>scripts\RoomGetWidth.gml</script>
+          <script>scripts\RoomGetHeight.gml</script>
+          <script>scripts\RoomGetRight.gml</script>
+          <script>scripts\RoomGetBottom.gml</script>
+          <script>scripts\RoomSetLeft.gml</script>
+          <script>scripts\RoomSetTop.gml</script>
+          <script>scripts\RoomSetWidth.gml</script>
+          <script>scripts\RoomSetHeight.gml</script>
+          <script>scripts\RoomBSP.gml</script>
+          <script>scripts\RoomSplitVertically.gml</script>
+          <script>scripts\RoomSplitHorizontally.gml</script>
+        </scripts>
         <script>scripts\MapGenerateOpenCave.gml</script>
+        <script>scripts\MapGenerateDungeon.gml</script>
         <script>scripts\MapSetTileFlags.gml</script>
         <script>scripts\MapPlaceTiles.gml</script>
+        <script>scripts\mapConnectRooms.gml</script>
+        <script>scripts\mapAstarFindHallway.gml</script>
+        <script>scripts\mapPlaceGrass.gml</script>
+        <script>scripts\mapDrawRooms.gml</script>
       </scripts>
       <scripts name="pathfinding">
         <scripts name="dijkstra">
@@ -84,6 +105,8 @@
       <script>scripts\MapSetActor.gml</script>
       <script>scripts\MapAddObject.gml</script>
       <script>scripts\MapRemoveObject.gml</script>
+      <script>scripts\MapGetAdjacentActors.gml</script>
+      <script>scripts\MapDebugPosition.gml</script>
     </scripts>
     <scripts name="Blob">
       <script>scripts\Blob.gml</script>
@@ -122,6 +145,7 @@
       <script>scripts\ActorReduceHealth.gml</script>
       <script>scripts\ActorIsDead.gml</script>
       <script>scripts\ActorGetArmour.gml</script>
+      <script>scripts\ActorSetVisible.gml</script>
       <script>scripts\actorDie.gml</script>
       <script>scripts\actorModifyDamage.gml</script>
       <script>scripts\ActorDebug.gml</script>
@@ -172,12 +196,28 @@
       <script>scripts\toGuiY.gml</script>
       <script>scripts\string_capitalize.gml</script>
       <script>scripts\setViewPort.gml</script>
+      <script>scripts\string_split.gml</script>
     </scripts>
     <scripts name="Game">
+      <scripts name="states">
+        <script>scripts\gameStateNextRound.gml</script>
+        <script>scripts\gameStateNextTurn.gml</script>
+        <script>scripts\gameStateTurnStart.gml</script>
+        <script>scripts\gameStatePlayerTurn.gml</script>
+        <script>scripts\gameStateAiTurn.gml</script>
+        <script>scripts\gameStateMoveActor.gml</script>
+      </scripts>
+      <scripts name="console commands">
+        <script>scripts\gameConsoleCommand.gml</script>
+        <script>scripts\gameViewCommand.gml</script>
+        <script>scripts\gameKillCommand.gml</script>
+      </scripts>
+      <script>scripts\gameBattleLoop.gml</script>
+      <script>scripts\gameInState.gml</script>
       <script>scripts\gameSetAnimation.gml</script>
-      <script>scripts\aiTurn.gml</script>
-      <script>scripts\endTurn.gml</script>
-      <script>scripts\moveActor.gml</script>
+      <script>scripts\gameEndTurn.gml</script>
+      <script>scripts\gameMoveActor.gml</script>
+      <script>scripts\gamePlayersAlive.gml</script>
     </scripts>
     <scripts name="MarkovController">
       <scripts name="MarkovChain">
@@ -205,6 +245,7 @@
     </scripts>
     <scripts name="View">
       <script>scripts\ViewFocusOnActor.gml</script>
+      <script>scripts\ViewSetPosition.gml</script>
     </scripts>
     <scripts name="Item">
       <script>scripts\Item.gml</script>
@@ -274,8 +315,8 @@
       <script>scripts\PathPop.gml</script>
       <script>scripts\PathNext.gml</script>
       <script>scripts\PathSize.gml</script>
+      <script>scripts\PathEmpty.gml</script>
     </scripts>
-    <script>scripts\MapDebugPosition.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -291,11 +332,12 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="22">
+  <constants number="25">
     <constant name="NULL">-5</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_SIZE">16</constant>
-    <constant name="ATTACK_TIME">16</constant>
+    <constant name="ATTACK_TIME">15</constant>
+    <constant name="NO_ACTION_TIME">15</constant>
     <constant name="MOVE_TIME">4</constant>
     <constant name="MOUSE_HOLD_THRESHOLD">16</constant>
     <constant name="VIEW_ZOOM_MAX">2</constant>
@@ -314,6 +356,8 @@
     <constant name="MAX_INT">2147483647</constant>
     <constant name="FOREVER">2147483647</constant>
     <constant name="ROUND_TIME">6</constant>
+    <constant name="MIN_ROOM_HEIGHT">3</constant>
+    <constant name="MIN_ROOM_WIDTH">3</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

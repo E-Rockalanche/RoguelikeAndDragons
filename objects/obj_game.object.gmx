@@ -26,10 +26,8 @@
           <argument>
             <kind>1</kind>
             <string>initGlobals();
-map = Map(24, 24);
-MapGenerateOpenCave(map);
-MapSetTileFlags(map);
-MapPlaceTiles(map);
+map = Map(32, 32);
+MapGenerateDungeon(map);
 
 actor_list = MapGetActorList(map);
 player_list = ds_list_create();
@@ -37,25 +35,35 @@ round_queue = ds_queue_create();
 
 view = instance_create(x, y, obj_view);
 
-for(var n = 0; n &lt; 3; n++) {
-    do{
-        i = irandom_range(1, map.width-2);
-        j = irandom_range(1, map.height-2);
-    }until(MapPositionEmpty(map, i, j));
-    var player = Player();
-    player.name = "Player "+string(n);
-    MapAddActor(map, player, i, j);
-    ds_list_add(player_list, player);
-}
+world_state = WorldState.BATTLE;
+state = GameState.NEXT_ROUND;
+shadow = NULL;
+current_round = 0;
+current_actor = NULL;
+animation = false;
+focus_view_on_actor = NULL;
+player_turn = false;
+new_enemy_in_sight = false;
 
-for(var n = 0; n &lt; 5; n++) {
-    do{
-        i = irandom_range(1, map.width-2);
-        j = irandom_range(1, map.height-2);
-    }until(MapPositionEmpty(map, i, j));
-    var enemy = Enemy();
-    enemy.name = "Enemy "+string(n);
-    MapAddActor(map, enemy, i, j);
+//place players
+var i, j;
+do{
+    i = irandom_range(1, map.width-2);
+    j = irandom_range(1, map.height-2);
+}until(MapPositionEmpty(map, i, j));
+var player = Player();
+player.name = "Player0";
+MapAddActor(map, player, i, j);
+ds_list_add(player_list, player);
+
+var cell_list = MapGetAdjacentCells(map, player.i, player.j, 3);
+
+for(var n = 0; n &lt; ds_list_size(cell_list); n++) {
+    var point = cell_list[| n];
+    var player = Player();
+    player.name = "Player" + string(ds_list_size(player_list));
+    MapAddActor(map, player, PointGetX(point), PointGetY(point));
+    ds_list_add(player_list, player);
 }
 
 // get views for players
@@ -64,20 +72,25 @@ for(var n = 0; n &lt; ds_list_size(player_list); n++) {
     ActorCalculateFOV(player);
     MapAddFOV(map, player.view_list);
 }
-new_enemy_in_sight = false;
 
 //set view to player 1
 var player = player_list[| 0];
-view.x = player.x;
-view.y = player.y;
-
-state = GameState.NEXT_ROUND;
-shadow = NULL;
-current_round = 0;
-current_actor = NULL;
-animation = false;
-focus_view_on_actor = NULL;
-player_turn = false;
+ViewSetPosition(view, player.x, player.y);
+     
+//place enemies
+for(var n = 0; n &lt; 8; n++) {
+    var tries = 0;
+    do{
+        i = irandom_range(1, map.width-2);
+        j = irandom_range(1, map.height-2);
+    }until((MapPositionEmpty(map, i, j) &amp;&amp; !map.view_grid[# i, j]) || (tries == 1000));
+    if (tries == 1000) {
+        break;
+    }
+    var enemy = Enemy();
+    enemy.name = "Enemy "+string(n);
+    MapAddActor(map, enemy, i, j);
+}
 </string>
           </argument>
         </arguments>
@@ -186,145 +199,13 @@ if (display_get_orientation() != display_orientation) {
 
 step = (step+1) mod MAX_STEP;
 
-if (animation) exit;
-
-if (state == GameState.NEXT_ROUND) {
-    current_round++;
-    ds_queue_clear(round_queue);
-    for(var index = 0; index &lt; ds_list_size(actor_list); index++) {
-        ds_queue_enqueue(round_queue, actor_list[| index]);
-    }
-    state = GameState.NEXT_TURN;
-}
-
-if (state == GameState.NEXT_TURN) {
-    // get next actor
-    current_actor = NULL;
-    while((current_actor == NULL || ActorIsDead(current_actor))
-            &amp;&amp; ds_queue_size(round_queue)) {
-        current_actor = ds_queue_dequeue(round_queue);
-    }
-    
-    if (current_actor == NULL || ActorIsDead(current_actor)) {
-        state = GameState.NEXT_ROUND;
-    } else {
-        show_debug_message(current_actor.name+"'s turn");
+switch(world_state) {
+    case WorldState.BATTLE:
+        gameBattleLoop();
+        break;
         
-        current_actor.distance_moved = 0;
-        current_actor.state = ActorState.THINKING;
-        
-        state = GameState.TURN_START;
-        gameSetAnimation(ViewFocusOnActor(view, current_actor));
-        shadow = MapDrawShadow(map, shadow, false);
-        exit;
-    }
-}
-
-if (state == GameState.TURN_START) {
-    if (current_actor.is_player) {
-        MapSetActiveFOV(map, current_actor.view_list);
-        shadow = MapDrawShadow(map, shadow, true);
-    }
-    
-    ActorConditionEffects(current_actor);
-    
-    if (ActorHasCondition(current_actor, Condition.STUNNED)) {
-        state = GameState.NEXT_TURN;
-    } else {
-        if (ActorIsDead(current_actor)) {
-            state = GameState.NEXT_TURN;
-        } else {
-            if (current_actor.is_player) {
-                state = GameState.HIGHLIGHT_MOVE_AREA;
-            } else {
-                state = GameState.AI_TURN;
-            }
-        }
-    }
-    
-    ActorReduceConditionTimers(current_actor, ROUND_TIME);
-}
-
-if (state == GameState.HIGHLIGHT_MOVE_AREA) {
-    MapSetMovementArea(map, current_actor);
-    MapHighlightMovementArea(map);
-    state = GameState.PLAYER_TURN;
-}
-
-if (state == GameState.PLAYER_TURN) {
-    if (mouse_clicked[0]) {
-        var i = mouse_x div TILE_SIZE;
-        var j = mouse_y div TILE_SIZE;
-        if (withinBounds(i, j, 0, 0, map.width, map.height)) {
-            var actor = MapGetActor(map, i, j);
-            if (actor != NULL) {
-                if (actor == current_actor) {
-                    //end turn
-                    state = GameState.END_PLAYER_TURN;
-                } else if (actor.alliance != current_actor.alliance) {
-                    //attack
-                    if (getTileDistance(current_actor.i, current_actor.j, actor.i, actor.j) &lt;= 1.5) {
-                        if (MapDiagFree(map, actor.i, actor.j, current_actor.i, current_actor.j)) {
-                            MapClearMovementArea(map);
-                            ActorAttack(current_actor, actor);
-                            state = GameState.ACTOR_ATTACKING;
-                            gameSetAnimation(ATTACK_TIME);
-                            current_actor.state = ActorState.ATTACKING;
-                        }
-                    }
-                }
-            } else {
-                //move
-                var path = MapGetMovementAreaPathTo(map, i, j);
-                if (path != NULL) {
-                    MapClearMovementArea(map);
-                    moveActor(path);
-                }
-            }
-        }
-    }
-}
-
-if (state == GameState.AI_TURN) {
-    aiTurn();
-}
-
-if (state == GameState.MOVE_ACTOR) {
-    if (new_enemy_in_sight) {
-        assert(current_actor.is_player, "player alerted of new enemy on ai turn");
-        state = GameState.HIGHLIGHT_MOVE_AREA;
-        new_enemy_in_sight = false;
-        MapSetActor(map, current_actor);
-    } else if (PathSize(current_actor.path_stack)) {
-        gameSetAnimation(MOVE_TIME);
-        ActorMove(current_actor);
-        if (current_actor.is_player) {
-            alarm[1] = MOVE_TIME/2;
-        }
-    } else {
-        MapSetActor(map, current_actor);
-        current_actor.state = ActorState.WAITING;
-        if (current_actor.is_player) {
-            state = GameState.HIGHLIGHT_MOVE_AREA;
-        } else {
-            state = GameState.AI_TURN;
-        }
-    }
-}
-
-if (state == GameState.ACTOR_ATTACKING) {
-    current_actor.state = ActorState.WAITING;
-    if (current_actor.is_player) {
-        state = GameState.END_PLAYER_TURN;
-    } else {
-        state = GameState.NEXT_TURN;
-    }
-}
-
-if (state == GameState.END_PLAYER_TURN) {
-    MapClearMovementArea(map);
-    shadow = MapDrawShadow(map, shadow, false);
-    endTurn();
+    default:
+        assert(false, "world state "+string(world_state)+" not implemented");
 }
 </string>
           </argument>

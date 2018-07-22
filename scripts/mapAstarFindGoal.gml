@@ -1,3 +1,5 @@
+assert(object_index == obj_map, "mapAstarFindGoal() not being executed by obj_map");
+
 var actor = argument0;
 var goal_x = argument1;
 var goal_y = argument2;

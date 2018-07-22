@@ -5,8 +5,9 @@ enum Condition {
     LENGTH
 };
 
-globalvar CONDITION_HAS_ROUND_EFFECT;
+globalvar CONDITION_HAS_ROUND_EFFECT, CONDITION_CAN_COMBINE;
 CONDITION_HAS_ROUND_EFFECT = getBit(Condition.BLEEDING) | getBit(Condition.POISONED);
+CONDITION_CAN_COMBINE = getBit(Condition.BLEEDING) | getBit(Condition.POISONED);
 
 globalvar condition_names;
 condition_names[Condition.POISONED] = "Poisoned";

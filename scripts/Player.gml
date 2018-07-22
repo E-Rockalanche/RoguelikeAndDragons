@@ -4,7 +4,7 @@ with(new_player) {
     alliance = Alliance.GOOD;
     is_player = true;
     
-    max_hp = 20;
+    max_hp = 100;
     hp = max_hp;
 
     var weapon = NULL;

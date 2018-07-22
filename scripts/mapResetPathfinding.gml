@@ -1,3 +1,5 @@
+assert(object_index == obj_map, "mapResetPathfinding() not being executed by obj_map");
+
 //clear open tiles
 while(ds_priority_size(open_list)) {
     var point = ds_priority_delete_min(open_list);

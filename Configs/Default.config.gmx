@@ -680,7 +680,7 @@
   <ConfigConstants>
     <constants number="2">
       <constant name="IS_MOBILE">false</constant>
-      <constant name="DEBUG">true</constant>
+      <constant name="DEBUG">false</constant>
     </constants>
   </ConfigConstants>
 </Config>

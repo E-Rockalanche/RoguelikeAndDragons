@@ -72,12 +72,14 @@ if (!IS_MOBILE) {
 
 if (state == ViewState.MOVE_FOCUS_TO_ACTOR) {
     tween += 1/move_time;
-    x = x0 + cubicInOutTween(tween) * (x1 - x0);
-    y = y0 + cubicInOutTween(tween) * (y1 - y0);
+    x = x0 + cubicInOutTween(tween) * (actor.x - x0);
+    y = y0 + cubicInOutTween(tween) * (actor.y - y0);
     if (tween &gt;= 1) {
         state = ViewState.FOCUS_ON_ACTOR;
     }
-} else if (state == ViewState.FOCUS_ON_ACTOR) {
+}
+
+if (state == ViewState.FOCUS_ON_ACTOR) {
     x = actor.x;
     y = actor.y;
 }

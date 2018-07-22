@@ -26,18 +26,12 @@ with(argument[0]) {
     for(var index = 0; index < ds_list_size(actor_list); index++) {
         var actor = actor_list[| index];
         
-        if view_grid[# i, j] {
-            if (!actor.in_view && !actor.was_in_view) {
-                new_enemy_in_sight = true;
-            }
-            actor.in_view = true;
-        } else {
-            if actor.in_view {
-                actor.in_view = false;
-                actor.was_in_view = true;
-            } else {
-                actor.was_in_view = false;
-            }
+        ActorSetVisible(actor, view_grid[# actor.i, actor.j] > 0);
+        
+        if (actor.in_view && !actor.discovered) {
+            actor.discovered = true;
+            new_enemy_in_sight = true;
+            show_debug_message("New enemy in sight: " + actor.name);
         }
     }
 }

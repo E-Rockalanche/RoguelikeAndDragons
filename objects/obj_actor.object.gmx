@@ -36,7 +36,7 @@ for(var a = Attribute.LENGTH-1; a &gt;= 0; a--) {
 unarmed_damage = NULL;
 natural_armour = 0;
 
-max_hp = irandom_range(10, 20);
+max_hp = 10;
 hp = max_hp;
 </string>
           </argument>
@@ -100,6 +100,7 @@ conditions = ds_list_create();
 
 in_view = false;
 was_in_view = false;
+discovered = false;
 
 i = 0;
 j = 0;
