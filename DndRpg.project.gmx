@@ -62,7 +62,7 @@
           <script>scripts\RoomSplitVertically.gml</script>
           <script>scripts\RoomSplitHorizontally.gml</script>
         </scripts>
-        <script>scripts\MapGenerateOpenCave.gml</script>
+        <script>scripts\MapGenerateCave.gml</script>
         <script>scripts\MapGenerateDungeon.gml</script>
         <script>scripts\MapSetTileFlags.gml</script>
         <script>scripts\MapPlaceTiles.gml</script>
@@ -70,6 +70,7 @@
         <script>scripts\mapAstarFindHallway.gml</script>
         <script>scripts\mapPlaceGrass.gml</script>
         <script>scripts\mapDrawRooms.gml</script>
+        <script>scripts\mapDrawHallway.gml</script>
       </scripts>
       <scripts name="pathfinding">
         <scripts name="dijkstra">
@@ -317,6 +318,7 @@
       <script>scripts\PathSize.gml</script>
       <script>scripts\PathEmpty.gml</script>
     </scripts>
+    <script>scripts\mapGetOpenSpaces.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>

@@ -4,6 +4,7 @@ with (new_map) {
     height = argument1;
     
     tile_grid = ds_grid_create(width, height);
+    ds_grid_clear(tile_grid, Tile.WALL);
     flag_grid = ds_grid_create(width, height);
     g_grid = ds_grid_create(width, height);
     parent_grid = ds_grid_create(width, height);
