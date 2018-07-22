@@ -25,8 +25,8 @@ for(var it = 0; it < iterations; it++) {
             if (cur == 0 || cur == 1) {
                 var num_alive = 0;
                 for(var d = 0; d < 8; d++) {
-                    var ii = i + dirs[d, 0];
-                    var jj = j + dirs[d, 1];
+                    var ii = i + x_dirs[d];
+                    var jj = j + y_dirs[d];
                     if (withinBounds(ii, jj, 0, 0, width, height)) {
                         num_alive += (old_grid[# ii, jj] > 0);
                     }

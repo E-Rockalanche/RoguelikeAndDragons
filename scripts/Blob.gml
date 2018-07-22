@@ -12,7 +12,7 @@ if (width < 4) || (height < 4)
     return NULL;
 
 var grid = ds_grid_create(width, height);
-ds_grid_generate_blobs(grid, seed_chance, 5, 4, 6);
+ds_grid_generate_blobs(grid, seed_chance, 5, 4, 8);
 
 var max_size = 0;
 var max_blob_id = 0;
