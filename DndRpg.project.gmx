@@ -3,6 +3,7 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
     <Config>Configs\android</Config>
+    <Config>Configs\windows</Config>
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
