@@ -8,7 +8,8 @@
   <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites">
-    <sprite>sprites\spr_player</sprite>
+    <sprite>sprites\spr_knight</sprite>
+    <sprite>sprites\spr_rogue</sprite>
     <sprite>sprites\spr_snake</sprite>
     <sprite>sprites\spr_controller</sprite>
     <sprite>sprites\spr_camera</sprite>
@@ -18,6 +19,7 @@
     <sprite>sprites\spr_stunned</sprite>
     <sprite>sprites\spr_bleeding</sprite>
     <sprite>sprites\spr_poisoned</sprite>
+    <sprite>sprites\sprite10</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bkr_tile_highlights</background>
@@ -30,7 +32,6 @@
   <scripts name="scripts">
     <scripts name="globals">
       <script>scripts\initGlobals.gml</script>
-      <script>scripts\gameGlobals.gml</script>
       <script>scripts\mouseGlobals.gml</script>
       <script>scripts\setDirs.gml</script>
     </scripts>
@@ -67,6 +68,7 @@
         <script>scripts\MapGenerateDungeon.gml</script>
         <script>scripts\MapSetTileFlags.gml</script>
         <script>scripts\MapPlaceTiles.gml</script>
+        <script>scripts\mapGetOpenSpaces.gml</script>
         <script>scripts\mapConnectRooms.gml</script>
         <script>scripts\mapAstarFindHallway.gml</script>
         <script>scripts\mapPlaceGrass.gml</script>
@@ -86,6 +88,7 @@
           <script>scripts\mapAstarFindGoal.gml</script>
         </scripts>
         <script>scripts\MapGetPathCost.gml</script>
+        <script>scripts\MapGetEmptyEndPathTo.gml</script>
         <script>scripts\MapGetPathTo.gml</script>
         <script>scripts\MapHighlightMovementArea.gml</script>
         <script>scripts\MapClearMovementArea.gml</script>
@@ -108,6 +111,7 @@
       <script>scripts\MapAddObject.gml</script>
       <script>scripts\MapRemoveObject.gml</script>
       <script>scripts\MapGetAdjacentActors.gml</script>
+      <script>scripts\MapCellIsChoke.gml</script>
       <script>scripts\MapDebugPosition.gml</script>
     </scripts>
     <scripts name="Blob">
@@ -118,6 +122,8 @@
       <scripts name="stats">
         <script>scripts\ActorGetMoveDistance.gml</script>
         <script>scripts\ActorGetViewDistance.gml</script>
+        <script>scripts\ActorGetAttribute.gml</script>
+        <script>scripts\ActorGetAttributeMod.gml</script>
       </scripts>
       <scripts name="Enemy">
         <script>scripts\Enemy.gml</script>
@@ -145,6 +151,7 @@
       <script>scripts\ActorGetDamage.gml</script>
       <script>scripts\ActorTakeDamage.gml</script>
       <script>scripts\ActorReduceHealth.gml</script>
+      <script>scripts\ActorIsAlive.gml</script>
       <script>scripts\ActorIsDead.gml</script>
       <script>scripts\ActorGetArmour.gml</script>
       <script>scripts\ActorSetVisible.gml</script>
@@ -201,25 +208,30 @@
       <script>scripts\string_split.gml</script>
     </scripts>
     <scripts name="Game">
-      <scripts name="states">
-        <script>scripts\gameStateNextRound.gml</script>
-        <script>scripts\gameStateNextTurn.gml</script>
-        <script>scripts\gameStateTurnStart.gml</script>
-        <script>scripts\gameStatePlayerTurn.gml</script>
-        <script>scripts\gameStateAiTurn.gml</script>
-        <script>scripts\gameStateMoveActor.gml</script>
+      <scripts name="battle">
+        <script>scripts\gameBattleLoop.gml</script>
+        <script>scripts\gameBattleNextRound.gml</script>
+        <script>scripts\gameBattleNextTurn.gml</script>
+        <script>scripts\gameBattleTurnStart.gml</script>
+        <script>scripts\gameBattlePlayerTurn.gml</script>
+        <script>scripts\gameBattleAiTurn.gml</script>
+        <script>scripts\gameBattleMoveActor.gml</script>
+        <script>scripts\gameEndTurn.gml</script>
+        <script>scripts\gameMoveActor.gml</script>
       </scripts>
       <scripts name="console commands">
         <script>scripts\gameConsoleCommand.gml</script>
         <script>scripts\gameViewCommand.gml</script>
         <script>scripts\gameKillCommand.gml</script>
       </scripts>
-      <script>scripts\gameBattleLoop.gml</script>
-      <script>scripts\gameInState.gml</script>
+      <scripts name="explore">
+        <script>scripts\gameExploreLoop.gml</script>
+      </scripts>
+      <script>scripts\gameGlobals.gml</script>
       <script>scripts\gameSetAnimation.gml</script>
-      <script>scripts\gameEndTurn.gml</script>
-      <script>scripts\gameMoveActor.gml</script>
       <script>scripts\gamePlayersAlive.gml</script>
+      <script>scripts\gameStartBattle.gml</script>
+      <script>scripts\gameEndBattle.gml</script>
     </scripts>
     <scripts name="MarkovController">
       <scripts name="MarkovChain">
@@ -243,6 +255,7 @@
     </scripts>
     <scripts name="Splash">
       <script>scripts\SplashText.gml</script>
+      <script>scripts\SplashState.gml</script>
       <script>scripts\SplashDamage.gml</script>
     </scripts>
     <scripts name="View">
@@ -319,7 +332,7 @@
       <script>scripts\PathSize.gml</script>
       <script>scripts\PathEmpty.gml</script>
     </scripts>
-    <script>scripts\mapGetOpenSpaces.gml</script>
+    <script>scripts\gameEnemiesInViewCount.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -335,7 +348,7 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="25">
+  <constants number="27">
     <constant name="NULL">-5</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_SIZE">16</constant>
@@ -361,6 +374,8 @@
     <constant name="ROUND_TIME">6</constant>
     <constant name="MIN_ROOM_HEIGHT">3</constant>
     <constant name="MIN_ROOM_WIDTH">3</constant>
+    <constant name="ALL_PLAYER_VIEWS">false</constant>
+    <constant name="CURRENT_PLAYER_VIEW">true</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

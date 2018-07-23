@@ -1,5 +1,4 @@
-if (new_enemy_in_sight) {
-    assert(current_actor.is_player, "player alerted of new enemy on ai turn");
+if (new_enemy_in_sight && current_actor.is_player) {
     state = GameState.HIGHLIGHT_MOVE_AREA;
     new_enemy_in_sight = false;
     show_debug_message("Stopping because a new enemy is in sight");

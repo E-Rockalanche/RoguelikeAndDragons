@@ -8,6 +8,8 @@ enum Attribute {
 };
 
 enum ActorState {
+    SLEEPING,
+    DORMANT,
     WAITING,
     THINKING,
     MOVING,

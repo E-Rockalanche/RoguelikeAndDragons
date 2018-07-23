@@ -85,7 +85,7 @@ if (state == ViewState.FOCUS_ON_ACTOR) {
 }
 
 if mouse_holding[0] {
-    if mouse_holding[1] {
+    if (IS_MOBILE &amp;&amp; mouse_holding[1]) {
         var d1 = point_distance(mouse_click_x[0], mouse_click_y[0], mouse_click_x[1], mouse_click_y[1]);
         var d2 = point_distance(device_mouse_raw_x(0), device_mouse_raw_y(0), device_mouse_raw_x(1), device_mouse_raw_y(1));
         

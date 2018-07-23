@@ -1,1 +1,3 @@
-ds_stack_destroy(argument0);
+if (argument0 != NULL) {
+    ds_stack_destroy(argument0);
+}

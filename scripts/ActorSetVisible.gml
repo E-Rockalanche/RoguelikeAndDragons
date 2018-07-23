@@ -4,6 +4,13 @@ with(argument0) {
     visible = in_view;
     
     if (in_view) {
-        discovered = true;
+        if (state == ActorState.DORMANT) {
+            state = ActorState.WAITING;
+        }
+        if (!discovered && !is_player) {
+            discovered = true;
+            new_enemy_in_sight = true;
+            show_debug_message("New enemy in sight: "+name);
+        }
     }
 }

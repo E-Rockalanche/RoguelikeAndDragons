@@ -18,5 +18,11 @@ with(argument0) {
         str += "#" + ConditionGetName(condition) + " " + string(ConditionGetTime(condition)) + "s";
     }
     
+    str += "#In view: " + string(in_view);
+    
+    str += "#Was in view: " + string(was_in_view);
+    
+    str += "#Discovered: " + string(discovered);
+    
     return str;
 }

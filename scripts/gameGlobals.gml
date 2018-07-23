@@ -13,7 +13,15 @@ draw_set_font(fnt_default);
 
 enum WorldState {
     EXPLORE,
-    BATTLE
+    BATTLE,
+    LENGTH
+};
+
+enum ExploreState {
+    MAP_TURN,
+    PLAYER_TURN,
+    AI_TURN,
+    LENGTH
 }
 
 enum GameState {
@@ -26,16 +34,19 @@ enum GameState {
     AI_TURN,
     MOVE_ACTOR,
     MOVE_ACTORS,
-    ACTOR_ATTACKING
+    ACTOR_ATTACKING,
+    LENGTH
 };
 
 enum SplashType {
     SPRITE,
-    TEXT
+    TEXT,
+    LENGTH
 };
 
 enum ViewState {
     MOVE_FOCUS_TO_ACTOR,
     FOCUS_ON_ACTOR,
-    PLAYER_CONTROL
+    PLAYER_CONTROL,
+    LENGTH
 };

@@ -1,1 +1,1 @@
-return ds_stack_empty(argument0);
+return (argument0 == NULL) || ds_stack_empty(argument0);

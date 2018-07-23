@@ -8,5 +8,7 @@ with(argument0) {
     actor.map = id;
     actor.i = i;
     actor.j = j;
+    actor.x = (0.5 + i) * TILE_SIZE;
+    actor.y = (0.5 + j) * TILE_SIZE;
     ds_grid_set_flag(flag_grid, i, j, TileFlag.HAS_ACTOR);
 }

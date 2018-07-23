@@ -6,9 +6,6 @@ with(argument0) {
     if (view_list == active_view) {
         flags |= TileFlag.IN_ACTIVE_VIEW;
         active_view = NULL;
-        show_debug_message("Removing FOV and unsetting as active "+string(view_list));
-    } else {
-        show_debug_message("Removing FOV "+string(view_list));
     }
     
     for(var index = 0; index < ds_list_size(view_list); index++) {

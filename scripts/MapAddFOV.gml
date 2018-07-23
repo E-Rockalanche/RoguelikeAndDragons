@@ -6,10 +6,7 @@ with(argument[0]) {
             MapClearActiveView(argument[0]);
             flags |= TileFlag.IN_ACTIVE_VIEW;
             active_view = view_list;
-            show_debug_message("Adding FOV and setting to active "+string(view_list));
         }
-    } else {
-        show_debug_message("Adding FOV "+string(view_list));
     }
     
     assert(view_list != NULL, "Adding null FOV");
@@ -27,11 +24,5 @@ with(argument[0]) {
         var actor = actor_list[| index];
         
         ActorSetVisible(actor, view_grid[# actor.i, actor.j] > 0);
-        
-        if (actor.in_view && !actor.discovered) {
-            actor.discovered = true;
-            new_enemy_in_sight = true;
-            show_debug_message("New enemy in sight: " + actor.name);
-        }
     }
 }

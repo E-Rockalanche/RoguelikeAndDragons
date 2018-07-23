@@ -14,9 +14,9 @@ with(argument0) {
     
     var view = ds_list_create();
     var mask = ds_grid_create(width, height);
-    mask[# i, j] = true// must have
+    mask[# i, j] = true;
     for(var octant = 0; octant < 8; octant++) {
-        // view list, view mask, center x, center y, octant, max distance, start_column, start slope, end slope, add_walls, underwater fov
+        // view list, view mask, center x, center y, octant, max distance, start_column, start slope, end slope, add_walls
         mapScanOctantFOV(view, mask, i, j, octant, max_radius, 1, 0, 1, add_walls);
     }
     ds_list_add(view, Point(i, j));

@@ -1,0 +1,1 @@
+return !ActorIsDead(argument0);

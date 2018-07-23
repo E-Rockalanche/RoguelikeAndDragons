@@ -1,13 +1,13 @@
 if (current_actor.is_player) {
     MapSetActiveFOV(map, current_actor.view_list);
-    shadow = MapDrawShadow(map, shadow, true);
+    shadow = MapDrawShadow(map, shadow, CURRENT_PLAYER_VIEW);
 }
     
 ActorConditionEffects(current_actor);
 
 if (ActorHasCondition(current_actor, Condition.STUNNED)) {
     state = GameState.NEXT_TURN;
-    gameSetAnimation(ANIMATION_TIME);
+    gameSetAnimation(NO_ACTION_TIME);
 } else {
     if (ActorIsDead(current_actor)) {
         state = GameState.NEXT_TURN;

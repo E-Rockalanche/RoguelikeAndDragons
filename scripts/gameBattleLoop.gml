@@ -1,16 +1,18 @@
-while(!animation && (gamePlayersAlive() > 0)) {
+while(!animation
+        && (gamePlayersAlive() > 0)
+        && (world_state == WorldState.BATTLE)) {
     var break_from_loop = false;
     switch(state) {
         case GameState.NEXT_ROUND:
-            gameStateNextRound();
+            gameBattleNextRound();
             break;
         
         case GameState.NEXT_TURN:
-            gameStateNextTurn();
+            gameBattleNextTurn();
             break;
         
         case GameState.TURN_START:
-            gameStateTurnStart();
+            gameBattleTurnStart();
             break;
         
         case GameState.HIGHLIGHT_MOVE_AREA:
@@ -23,16 +25,16 @@ while(!animation && (gamePlayersAlive() > 0)) {
             if (DEBUG) {
                 gameConsoleCommand();
             }
-            gameStatePlayerTurn();
+            gameBattlePlayerTurn();
             break_from_loop = true;
             break;
         
         case GameState.AI_TURN:
-            gameStateAiTurn();
+            gameBattleAiTurn();
             break;
         
         case GameState.MOVE_ACTOR:
-            gameStateMoveActor();
+            gameBattleMoveActor();
             break;
         
         case GameState.ACTOR_ATTACKING:

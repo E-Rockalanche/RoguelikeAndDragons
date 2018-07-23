@@ -3,6 +3,8 @@ executed by obj_game
 */
 assert(object_index == obj_game, "aiTurn() not being executed by obj_game");
 
+if (current_actor.state == ActorState.DORMANT) exit;
+
 var enemy_list = ds_list_create();
 for(var index = 0; index < ds_list_size(actor_list); index++) {
     var cur = actor_list[| index];
@@ -42,7 +44,9 @@ if (ds_list_empty(enemy_list)) {
             
             gameMoveActor(path);
         } else {
-            gameSetAnimation(NO_ACTION_TIME);
+            if (current_actor.in_view) {
+                gameSetAnimation(NO_ACTION_TIME);
+            }
             gameEndTurn();
         }
     }

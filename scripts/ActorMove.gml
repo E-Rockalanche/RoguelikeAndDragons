@@ -1,3 +1,7 @@
+/*
+Note: Should use MapMoveActor() during exploration state
+*/
+
 with(argument0) {
     assert(path_stack != NULL, "path stack is null");
     assert(ds_stack_size(path_stack), "path stack is empty");

@@ -25,27 +25,48 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>initGlobals();
+            <string>/// Init data
+
+initGlobals();
 map = Map(32, 32);
 MapGenerateCave(map);
 
 actor_list = MapGetActorList(map);
 player_list = ds_list_create();
-round_queue = ds_queue_create();
+round_queue = ds_priority_create();
 
 view = instance_create(x, y, obj_view);
 
-world_state = WorldState.BATTLE;
-state = GameState.NEXT_ROUND;
+world_state = WorldState.EXPLORE;
+state = ExploreState.MAP_TURN;
+
 shadow = NULL;
 current_round = 0;
 current_actor = NULL;
 animation = false;
-focus_view_on_actor = NULL;
 player_turn = false;
 new_enemy_in_sight = false;
-
-//place players
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Place players
 var i, j;
 do{
     i = irandom_range(1, map.width-2);
@@ -65,6 +86,27 @@ for(var n = 0; n &lt; ds_list_size(cell_list); n++) {
     MapAddActor(map, player, PointGetX(point), PointGetY(point));
     ds_list_add(player_list, player);
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Set player FOV
 
 // get views for players
 for(var n = 0; n &lt; ds_list_size(player_list); n++) {
@@ -73,11 +115,32 @@ for(var n = 0; n &lt; ds_list_size(player_list); n++) {
     MapAddFOV(map, player.view_list);
 }
 
+shadow = MapDrawShadow(map, shadow, ALL_PLAYER_VIEWS);
+
 //set view to player 1
 var player = player_list[| 0];
 ViewSetPosition(view, player.x, player.y);
-     
-//place enemies
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Place enemies
 for(var n = 0; n &lt; 8; n++) {
     var tries = 0;
     do{
@@ -91,6 +154,64 @@ for(var n = 0; n &lt; 8; n++) {
     enemy.name = "Enemy "+string(n);
     MapAddActor(map, enemy, i, j);
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>ds_priority_destroy(round_queue);
+ds_list_destroy(player_list);
+surface_free(shadow);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="2">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Set FOV for moving players
+
+for(var n = 0; n &lt; ds_list_size(player_list); n++) {
+    var player = player_list[| n];
+    if (player.state == ActorState.MOVING) {
+        MapRemoveFOV(map, player.view_list);
+        ActorCalculateFOV(player);
+        MapAddFOV(map, player.view_list, false);
+    }
+}
+shadow = MapDrawShadow(map, shadow, ALL_PLAYER_VIEWS);
 </string>
           </argument>
         </arguments>
@@ -113,7 +234,9 @@ for(var n = 0; n &lt; 8; n++) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Set new player FOV
+            <string>/// Set new current_actor FOV
+assert(current_actor.is_player, "alarm[1] Setting FOV for "+current_actor.name);
+
 MapRemoveFOV(map, current_actor.view_list);
 ActorCalculateFOV(current_actor);
 MapAddFOV(map, current_actor.view_list, true);
@@ -200,6 +323,10 @@ if (display_get_orientation() != display_orientation) {
 step = (step+1) mod MAX_STEP;
 
 switch(world_state) {
+    case WorldState.EXPLORE:
+        gameExploreLoop();
+        break;
+    
     case WorldState.BATTLE:
         gameBattleLoop();
         break;
@@ -312,7 +439,10 @@ if (DEBUG) {
             <kind>1</kind>
             <string>///Draw shadow
 if (!surface_exists(shadow)) {
-    var active_view = (current_actor != NULL &amp;&amp; current_actor.is_player);
+    var active_view = (current_actor != NULL
+        &amp;&amp; current_actor.is_player
+        &amp;&amp; world_state == WorldState.BATTLE
+        &amp;&amp; state == GameState.PLAYER_TURN);
     shadow = MapDrawShadow(map, shadow, active_view);
 }
 draw_surface_ext(shadow, 0, 0, TILE_SIZE, TILE_SIZE, 0, c_white, 1);

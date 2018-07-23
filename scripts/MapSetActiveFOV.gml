@@ -6,7 +6,6 @@ with(argument0) {
         if (active_view != NULL) {
             MapClearActiveView(argument0);
         }
-        show_debug_message("Setting active FOV "+string(view_list));
         
         active_view = view_list;
         assert(active_view != NULL, "Setting null FOV");
@@ -16,7 +15,5 @@ with(argument0) {
             var j = PointGetY(point);
             ds_grid_set_flag(flag_grid, i, j, TileFlag.DISCOVERED | TileFlag.IN_ACTIVE_VIEW);
         }
-    } else {
-        show_debug_message("FOV is already active");
     }
 }

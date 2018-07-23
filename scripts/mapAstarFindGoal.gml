@@ -22,7 +22,10 @@ while(ds_priority_size(open_list)) {
         var j = parent_j + y_dirs[d];
         var flags = flag_grid[# i, j];
         
-        if (closed_grid[# i, j] || (flags & TileFlag.SOLID) || !MapDiagFree(id, parent_i, parent_j, i, j))
+        if (closed_grid[# i, j]
+                || (flags & TileFlag.SOLID)
+                || (actor.is_player && !(flags & TileFlag.DISCOVERED))
+                || !MapDiagFree(id, parent_i, parent_j, i, j))
             continue;
             
         if (flags & TileFlag.HAS_ACTOR) {
