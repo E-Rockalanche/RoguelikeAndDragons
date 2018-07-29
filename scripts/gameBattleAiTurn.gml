@@ -3,6 +3,8 @@ executed by obj_game
 */
 assert(object_index == obj_game, "aiTurn() not being executed by obj_game");
 
+console_state("AI Turn");
+
 if (current_actor.state == ActorState.DORMANT) exit;
 
 var enemy_list = ds_list_create();

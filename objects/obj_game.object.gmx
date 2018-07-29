@@ -46,6 +46,7 @@ current_actor = NULL;
 animation = false;
 player_turn = false;
 new_enemy_in_sight = false;
+auto_move = false;
 </string>
           </argument>
         </arguments>
@@ -338,6 +339,45 @@ switch(world_state) {
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///test fov slice
+/*
+var player = player_list[| 0];
+var test_depth = -11;
+
+tile_layer_delete(test_depth);
+
+var dir = point_direction(player.i, player.j, mouse_x div TILE_SIZE, mouse_y div TILE_SIZE);
+var angle = 60;
+
+var fov = MapGetFOVSlice(map, player.i, player.j, dir, angle, MAX_INT, false);
+
+for(var n = 0; n &lt; ds_list_size(fov); n++) {
+    var point = fov[| n];
+    tile_add(bkr_red_highlight, 0, 0, TILE_SIZE, TILE_SIZE, PointGetX(point)*TILE_SIZE, PointGetY(point)*TILE_SIZE, test_depth);
+}
+
+ds_list_destroy(fov);
+*/
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="7" enumb="3">
       <action>
@@ -393,6 +433,7 @@ if (DEBUG) {
     var i = mouse_x div TILE_SIZE;
     var j = mouse_y div TILE_SIZE;
     if (withinBounds(i, j, 0, 0, map.width, map.height)) {
+        draw_set_alpha(1);
         var text;
         var actor = MapGetActor(map, i, j);
         if (actor != NULL) {
@@ -438,6 +479,8 @@ if (DEBUG) {
           <argument>
             <kind>1</kind>
             <string>///Draw shadow
+draw_set_alpha(1);
+
 if (!surface_exists(shadow)) {
     var active_view = (current_actor != NULL
         &amp;&amp; current_actor.is_player

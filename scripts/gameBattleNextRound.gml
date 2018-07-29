@@ -1,3 +1,5 @@
+console_state("Next Round");
+
 current_round++;
 
 ds_priority_clear(round_queue);

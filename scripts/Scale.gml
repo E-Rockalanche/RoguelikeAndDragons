@@ -1,4 +1,4 @@
 var armour = Armour();
-armour[? "name"] = "scale mail";
+armour[? "name"] = "Scale mail";
 armour[? "defense"] = 2;
 return armour;

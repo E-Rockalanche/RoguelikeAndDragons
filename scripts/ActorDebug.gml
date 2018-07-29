@@ -4,7 +4,10 @@ with(argument0) {
     str += "#HP: " + string(hp) + "/" + string(max_hp);
     
     var damage = NULL;
-    if (rhand != NULL) damage = WeaponGetDamage(rhand);
+    if (rhand != NULL) {
+        str += "#Weapon: " + ItemGetName(rhand);
+        damage = WeaponGetDamage(rhand);
+    }
     else if (unarmed_damage != NULL) damage = unarmed_damage;
     if (damage != NULL) {
         str += "#Damage: " + string(DamageGetLow(damage)) + "-" + string(DamageGetHigh(damage))

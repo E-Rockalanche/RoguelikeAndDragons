@@ -132,7 +132,7 @@ draw_y = y;
           <argument>
             <kind>1</kind>
             <string>InventoryDestroy(inventory);
-PathDestroy(path);
+PathDestroy(path_stack);
 
 if (view_list != NULL) {
     ds_list_destroy(view_list);
@@ -227,6 +227,8 @@ if (state == ActorState.THINKING) {
           <argument>
             <kind>1</kind>
             <string>///Draw self
+draw_set_alpha(1);
+
 draw_sprite(sprite_index, image_index, draw_x, draw_y);
 
 var gap = 6;

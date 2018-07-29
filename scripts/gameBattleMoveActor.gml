@@ -1,3 +1,5 @@
+console_state("Move Actor");
+
 if (new_enemy_in_sight && current_actor.is_player) {
     state = GameState.HIGHLIGHT_MOVE_AREA;
     new_enemy_in_sight = false;

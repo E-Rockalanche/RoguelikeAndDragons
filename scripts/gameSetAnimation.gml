@@ -4,5 +4,11 @@ arguments:
 */
 assert(object_index == obj_game, "gameSetAnimation() not being executed by obj_game");
 
-alarm[0] = argument0;
-animation = true;
+var time = argument0;
+
+if (time > 0) {
+    alarm[0] = time;
+    animation = true;
+} else {
+    animation = false;
+}

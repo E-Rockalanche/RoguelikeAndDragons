@@ -8,19 +8,16 @@ with(new_player) {
     max_hp = 100;
     hp = max_hp;
 
-    var weapon = NULL;
+    var weapon = WeaponFactory();
     var armour = NULL;
     switch(choose(1, 2, 3)) {
         case 1:
-            weapon = Sword();
             armour = Scale();
         break;
         case 2:
-            weapon = Mace();
             armour = Plate();
         break;
         case 3:
-            weapon = Rapier();
             armour = Leather();
             sprite_index = spr_rogue;
         break;

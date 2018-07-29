@@ -16,6 +16,7 @@ while(!animation
             break;
         
         case GameState.HIGHLIGHT_MOVE_AREA:
+            console_state("Highlight Move Area");
             MapSetMovementArea(map, current_actor);
             MapHighlightMovementArea(map);
             state = GameState.PLAYER_TURN;
@@ -38,6 +39,7 @@ while(!animation
             break;
         
         case GameState.ACTOR_ATTACKING:
+            console_state("Actor Attacking");
             current_actor.state = ActorState.WAITING;
             if (current_actor.is_player) {
                 state = GameState.END_PLAYER_TURN;
@@ -47,6 +49,7 @@ while(!animation
             break;
         
         case GameState.END_PLAYER_TURN:
+            console_state("End Player Turn");
             MapClearMovementArea(map);
             shadow = MapDrawShadow(map, shadow, false);
             gameEndTurn();

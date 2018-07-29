@@ -5,5 +5,6 @@ setDirs();
 actorGlobals();
 mapGlobals();
 damageGlobals();
+attackGlobals();
 itemGlobals();
 conditionGlobals();

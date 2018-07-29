@@ -7,13 +7,17 @@ while(!animation && do_loop) {
             if (new_enemy_in_sight) {
                 gameStartBattle();
             } else {
+                for(var n = 0; n < ds_list_size(actor_list); n++) {
+                    var actor = actor_list[| n];
+                    ActorConditionEffects(actor, 1);
+                }
                 state = ExploreState.PLAYER_TURN;
             }
             break;
             
         case ExploreState.PLAYER_TURN:
             var player = player_list[| 0];
-            if (!PathEmpty(player.path_stack)) {
+            if (!PathEmpty(player.path_stack) && auto_move) {
                 MapMoveActor(map, player);
                 state = ExploreState.AI_TURN;
             } else if (mouse_clicked[0]) {
@@ -30,6 +34,7 @@ while(!animation && do_loop) {
                                 ActorSetPath(player, MapGetPathTo(map, i, j));
                                 MapMoveActor(map, player);
                                 state = ExploreState.AI_TURN;
+                                auto_move = true;
                             }
                         }
                     }

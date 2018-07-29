@@ -3,7 +3,7 @@ executed by obj_map
 */
 
 var view_list = argument0;
-var mask = argument1;// ds_grid
+var mask = argument1;
 var x0 = argument2;
 var y0 = argument3;
 var octant = argument4;
@@ -21,16 +21,16 @@ var add_walls = argument9;
     /5|6\
 */
 
-// safeguards
-if (start_column > max_radius) || (end_slope < start_slope)
+// fail safe
+if ((start_column > max_radius)
+        || (end_slope <= start_slope && !SEE_THROUGH_CRACKS)
+        || (end_slope < start_slope && SEE_THROUGH_CRACKS)) {
     exit;
+}
 
-// for each column in view
 for(var column = start_column; column <= max_radius; column++) {
-    
-    var start_row = ceil(start_slope*(column) - 0.5);
-    var end_row = min(ceil(end_slope*(column)), column);
-    
+    var start_row = max(0, ceil(start_slope*(column) - 0.5));
+    var end_row = min(column, round(end_slope*(column)));
     
     // restrict vision to circle
     if ((column*column + start_row*start_row) > (max_radius*max_radius)) {
@@ -80,16 +80,21 @@ for(var column = start_column; column <= max_radius; column++) {
             var new_start_slope = (row + 0.5)/(column - 0.5);
             var new_end_slope = (row - 0.5)/(column + 0.5);
             
-            if (new_end_slope >= start_slope) {
-                if (end_slope >= new_start_slope) {
-                    // split scan
+            if (((new_end_slope > start_slope) && !SEE_THROUGH_CRACKS)
+                    || (new_end_slope >= start_slope && SEE_THROUGH_CRACKS)) {
+                //continue FOV below wall
+                if (((end_slope > new_start_slope) && !SEE_THROUGH_CRACKS)
+                        || ((end_slope >= new_start_slope) && SEE_THROUGH_CRACKS)) {
+                    //continue FOV above wall
                     mapScanOctantFOV(view_list, mask, x0, y0, octant, max_radius, column + 1, start_slope, new_end_slope, add_walls);
                     start_slope = new_start_slope;
                 } else {
                     end_slope = new_end_slope;
-                    end_row = min(ceil(end_slope*(column)), column);
+                    end_row = row;// min(ceil(end_slope*(column)), column);
                 }
-            } else if (end_slope >= new_start_slope) {
+            } else if (((end_slope > new_start_slope) && !SEE_THROUGH_CRACKS)
+                    || ((end_slope >= new_start_slope) && SEE_THROUGH_CRACKS)) {
+                //continue FOV below wall
                 start_slope = new_start_slope;
             } else {
                 exit;
@@ -98,6 +103,8 @@ for(var column = start_column; column <= max_radius; column++) {
     }
     // ended column
     // stop if no area to scan
-    if (start_slope > end_slope)
+    if (((start_slope >= end_slope) && !SEE_THROUGH_CRACKS)
+            || ((start_slope > end_slope) && SEE_THROUGH_CRACKS)) {
         exit;
+    }
 }

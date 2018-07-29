@@ -27,6 +27,7 @@
     <background>background\background3</background>
     <background>background\bkr_tiles_sewer</background>
     <background>background\bkr_tiles_cave</background>
+    <background>background\bkr_red_highlight</background>
   </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
@@ -43,6 +44,7 @@
         <script>scripts\MapClearActiveView.gml</script>
         <script>scripts\MapClearFOV.gml</script>
         <script>scripts\MapGetFOV.gml</script>
+        <script>scripts\MapGetFOVSlice.gml</script>
         <script>scripts\mapScanOctantFOV.gml</script>
         <script>scripts\getOctantPosition.gml</script>
         <script>scripts\MapDrawShadow.gml</script>
@@ -133,7 +135,6 @@
       <scripts name="conditions">
         <script>scripts\ActorAddCondition.gml</script>
         <script>scripts\ActorConditionEffects.gml</script>
-        <script>scripts\ActorReduceConditionTimers.gml</script>
         <script>scripts\ActorHasCondition.gml</script>
         <script>scripts\ActorRemoveCondition.gml</script>
         <script>scripts\ActorClearConditions.gml</script>
@@ -155,6 +156,9 @@
       <script>scripts\ActorIsDead.gml</script>
       <script>scripts\ActorGetArmour.gml</script>
       <script>scripts\ActorSetVisible.gml</script>
+      <script>scripts\ActorInFOV.gml</script>
+      <script>scripts\ActorGetAttackRange.gml</script>
+      <script>scripts\ActorGetAttackType.gml</script>
       <script>scripts\actorDie.gml</script>
       <script>scripts\actorModifyDamage.gml</script>
       <script>scripts\ActorDebug.gml</script>
@@ -206,6 +210,10 @@
       <script>scripts\string_capitalize.gml</script>
       <script>scripts\setViewPort.gml</script>
       <script>scripts\string_split.gml</script>
+      <script>scripts\floorNearest.gml</script>
+      <script>scripts\angleGetOctant.gml</script>
+      <script>scripts\angleGetOctantSlope.gml</script>
+      <script>scripts\setRow.gml</script>
     </scripts>
     <scripts name="Game">
       <scripts name="battle">
@@ -232,6 +240,7 @@
       <script>scripts\gamePlayersAlive.gml</script>
       <script>scripts\gameStartBattle.gml</script>
       <script>scripts\gameEndBattle.gml</script>
+      <script>scripts\gameEnemiesInViewCount.gml</script>
     </scripts>
     <scripts name="MarkovController">
       <scripts name="MarkovChain">
@@ -263,17 +272,18 @@
       <script>scripts\ViewSetPosition.gml</script>
     </scripts>
     <scripts name="Item">
+      <script>scripts\itemGlobals.gml</script>
       <script>scripts\Item.gml</script>
       <script>scripts\ItemDestroy.gml</script>
-      <script>scripts\itemGlobals.gml</script>
+      <script>scripts\ItemHasFlag.gml</script>
+      <script>scripts\ItemGetName.gml</script>
+      <script>scripts\ItemGetType.gml</script>
       <scripts name="Weapon">
         <script>scripts\Weapon.gml</script>
+        <script>scripts\WeaponFactory.gml</script>
         <script>scripts\WeaponGetDamage.gml</script>
-        <scripts name="weapons">
-          <script>scripts\Sword.gml</script>
-          <script>scripts\Mace.gml</script>
-          <script>scripts\Rapier.gml</script>
-        </scripts>
+        <script>scripts\WeaponGetType.gml</script>
+        <script>scripts\WeaponGetAttackType.gml</script>
       </scripts>
       <scripts name="Armour">
         <script>scripts\Armour.gml</script>
@@ -332,7 +342,19 @@
       <script>scripts\PathSize.gml</script>
       <script>scripts\PathEmpty.gml</script>
     </scripts>
-    <script>scripts\gameEnemiesInViewCount.gml</script>
+    <scripts name="Attack">
+      <script>scripts\attackGlobals.gml</script>
+      <script>scripts\Attack.gml</script>
+      <script>scripts\AttackDestroy.gml</script>
+      <script>scripts\AreaAttack.gml</script>
+      <script>scripts\TargetAttack.gml</script>
+      <script>scripts\AttackSetFriendlyFire.gml</script>
+      <script>scripts\AttackGetHitList.gml</script>
+      <script>scripts\AttackGetAreaHitList.gml</script>
+      <script>scripts\AttackGetReachHitList.gml</script>
+      <script>scripts\AttackGetAdjacentHitList.gml</script>
+      <script>scripts\AttackGetSweepHitList.gml</script>
+    </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_default</font>
@@ -348,7 +370,7 @@
   <rooms name="rooms">
     <room>rooms\rm_game</room>
   </rooms>
-  <constants number="27">
+  <constants number="28">
     <constant name="NULL">-5</constant>
     <constant name="MAX_FLAGS">32</constant>
     <constant name="TILE_SIZE">16</constant>
@@ -376,6 +398,7 @@
     <constant name="MIN_ROOM_WIDTH">3</constant>
     <constant name="ALL_PLAYER_VIEWS">false</constant>
     <constant name="CURRENT_PLAYER_VIEW">true</constant>
+    <constant name="SEE_THROUGH_CRACKS">true</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

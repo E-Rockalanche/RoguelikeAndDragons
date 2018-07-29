@@ -1,4 +1,4 @@
 var armour = Armour();
-armour[? "name"] = "plate armour";
+armour[? "name"] = "Plate armour";
 armour[? "defense"] = 3;
 return armour;
